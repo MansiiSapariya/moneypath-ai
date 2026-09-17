@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Page Title -->
+        <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+            {% if lang == 'hi' %}आपकी प्रोफ़ाइल{% else %}Your Profile{% endif %}
+        </h1>
+
+        <!-- Profile Card -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-6">
+            <!-- Profile Header with Avatar -->
+            <div class="flex items-center gap-6 mb-8 pb-6 border-b border-gray-200">
+                <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="flex-1">
+                    <h2 class="text-2xl font-bold text-gray-800">{{ user.name or 'User' }}</h2>
+                    <p class="text-gray-600">+91 {{ user.firebase_uid[-10:] if user.firebase_uid else 'XXXXXXXXXX' }}</p>
+                </div>
+                <button id="edit-btn" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition shadow-md">
+                    <i class="fas fa-edit mr-2"></i>
+                    {% if lang == 'hi' %}संपादित करें{% else %}Edit{% endif %}
+                </button>
+            </div>
+
+            <!-- View Mode -->
+            <div id="view-mode">
+                <!-- Personal Information -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-user-circle text-blue-600"></i>
+                        {% if lang == 'hi' %}व्यक्तिगत जानकारी{% else %}Personal Information{% endif %}
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-sm text-gray-600 mb-1">
+                                {% if lang == 'hi' %}पेशा{% else %}Occupation{% endif %}
+                            </p>
+                            <p class="text-lg font-semibold text-gray-800">{{ user.occupation or 'Not specified' }}</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-sm text-gray-600 mb-1">
+                                {% if lang == 'hi' %}स्थान{% else %}Location{% endif %}
+                            </p>
+                            <p class="text-lg font-semibold text-gray-800">{{ user.location or 'Not specified' }}</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-sm text-gray-600 mb-1">
+                                {% if lang == 'hi' %}आयु{% else %}Age{% endif %}
+                            </p>
+                            <p class="text-lg font-semibold text-gray-800">{{ user.age or 'N/A' }} {% if lang == 'hi' %}वर्ष{% else %}years{% endif %}</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-sm text-gray-600 mb-1">
+                                {% if lang == 'hi' %}लिंग{% else %}Gender{% endif %}
+                            </p>
+                            <p class="text-lg font-semibold text-gray-800">{{ user.gender or 'Not specified' }}</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-sm text-gray-600 mb-1">
+                                {% if lang == 'hi' %}परिवार का आकार{% else %}Household Size{% endif %}
+                            </p>
+                            <p class="text-lg font-semibold text-gray-800">{{ user.household_size or 'N/A' }} {% if lang == 'hi' %}सदस्य{% else %}members{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Information -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-wallet text-green-600"></i>
+                        {% if lang == 'hi' %}वित्तीय जानकारी{% else %}Financial Information{% endif %}
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                            <p class="text-sm text-gray-600 mb-1">
+                                {% if lang == 'hi' %}मासिक आय{% else %}Monthly Income{% endif %}
+                            </p>
+                            <p class="text-2xl font-bold text-green-600">₹{{ "{:,.0f}".format(user.monthly_income) if user.monthly_income else '0' }}</p>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                            <p class="text-sm text-gray-600 mb-1">
+                                {% if lang == 'hi' %}मासिक खर्च{% else %}Monthly Expenses{% endif %}
+                            </p>
+                            <p class="text-2xl font-bold text-red-600">₹{{ "{:,.0f}".format(user.monthly_expenses) if user.monthly_expenses else '0' }}</p>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500 md:col-span-2">
+                            <p class="text-sm text-gray-600 mb-1">
+                                {% if lang == 'hi' %}मासिक बचत{% else %}Monthly Savings{% endif %}
+                            </p>
+                            <p class="text-2xl font-bold text-blue-600">
+                                ₹{{ "{:,.0f}".format((user.monthly_income or 0) - (user.monthly_expenses or 0)) }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loans Information -->
+                {% if user.existing_loans %}
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fas fa-file-invoice-dollar text-orange-600"></i>
+                        {% if lang == 'hi' %}मौजूदा ऋण{% else %}Existing Loans{% endif %}
+                    </h3>
+                    <div class="bg-orange-50 p-4 rounded-lg">
+                        <p class="text-gray-700">{{ user.existing_loans }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Account Created -->
+                <div class="text-center text-sm text-gray-500 mt-6 pt-6 border-t border-gray-200">
+                    {% if lang == 'hi' %}
+                    खाता बनाया गया: {{ user.created_at.strftime('%d %B %Y') if user.created_at else '01 Jan 2025' }}
+                    {% else %}
+                    Account Created: {{ user.created_at.strftime('%B %d, %Y') if user.created_at else '01 Jan 2025' }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Edit Mode (Hidden by default) -->
+            <div id="edit-mode" style="display: none;">
+                <form id="profile-form" class="space-y-6">
+                    <!-- Personal Information -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">
+                            {% if lang == 'hi' %}व्यक्तिगत जानकारी{% else %}Personal Information{% endif %}
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    {% if lang == 'hi' %}नाम{% else %}Name{% endif %}
+                                </label>
+                                <input type="text" name="name" value="{{ user.name }}" required
+                                    class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    {% if lang == 'hi' %}आयु{% else %}Age{% endif %}
+                                </label>
+                                <input type="number" name="age" value="{{ user.age }}" min="1" max="120" required
+                                    class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    {% if lang == 'hi' %}लिंग{% else %}Gender{% endif %}
+                                </label>
+                                <select name="gender" required
+                                    class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500">
+                                    <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>{% if lang == 'hi' %}पुरुष{% else %}Male{% endif %}</option>
+                                    <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>{% if lang == 'hi' %}महिला{% else %}Female{% endif %}</option>
+                                    <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>{% if lang == 'hi' %}अन्य{% else %}Other{% endif %}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    {% if lang == 'hi' %}पेशा{% else %}Occupation{% endif %}
+                                </label>
+                                <input type="text" name="occupation" value="{{ user.occupation }}" required
+                                    class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    {% if lang == 'hi' %}परिवार का आकार{% else %}Household Size{% endif %}
+                                </label>
+                                <input type="number" name="household_size" value="{{ user.household_size }}" min="1" required
+                                    class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    {% if lang == 'hi' %}स्थान{% else %}Location{% endif %}
+                                </label>
+                                <input type="text" name="location" value="{{ user.location }}" required
+                                    class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Information -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4">
+                            {% if lang == 'hi' %}वित्तीय जानकारी{% else %}Financial Information{% endif %}
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    {% if lang == 'hi' %}मासिक आय (₹){% else %}Monthly Income (₹){% endif %}
+                                </label>
+                                <input type="number" name="monthly_income" value="{{ user.monthly_income }}" min="0" required
+                                    class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    {% if lang == 'hi' %}मासिक खर्च (₹){% else %}Monthly Expenses (₹){% endif %}
+                                </label>
+                                <input type="number" name="monthly_expenses" value="{{ user.monthly_expenses }}" min="0" required
+                                    class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loans -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            {% if lang == 'hi' %}मौजूदा ऋण{% else %}Existing Loans{% endif %}
+                        </label>
+                        <textarea name="existing_loans" rows="3"
+                            class="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+                            placeholder="{% if lang == 'hi' %}ऋण विवरण (यदि कोई हो){% else %}Loan details (if any){% endif %}">{{ user.existing_loans }}</textarea>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4">
+                        <button type="submit"
+                            class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition shadow-md">
+                            <i class="fas fa-save mr-2"></i>
+                            {% if lang == 'hi' %}सहेजें{% else %}Save Changes{% endif %}
+                        </button>
+                        <button type="button" id="cancel-btn"
+                            class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 rounded-lg transition shadow-md">
+                            <i class="fas fa-times mr-2"></i>
+                            {% if lang == 'hi' %}रद्द करें{% else %}Cancel{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Settings Card -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-cog text-gray-600"></i>
+                {% if lang == 'hi' %}सेटिंग्स{% else %}Settings{% endif %}
+            </h3>
+            
+            <!-- Language Preference -->
+            <div class="flex items-center justify-between bg-blue-50 p-4 rounded-lg mb-4">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-language text-blue-600 text-xl"></i>
+                    <div>
+                        <p class="font-semibold text-gray-800">
+                            {% if lang == 'hi' %}भाषा प्राथमिकता{% else %}Language Preference{% endif %}
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            {% if lang == 'hi' %}English{% else %}English{% endif %}
+                        </p>
+                    </div>
+                </div>
+                <button onclick="changeLanguage()"
+                    class="bg-white hover:bg-gray-50 text-blue-600 font-semibold px-4 py-2 rounded-lg border border-blue-200 transition">
+                    {% if lang == 'hi' %}बदलें{% else %}Change{% endif %}
+                </button>
+            </div>
+
+            <!-- Logout Button -->
+            <a href="{{ url_for('logout') }}"
+                class="flex items-center justify-center gap-3 bg-red-50 hover:bg-red-100 text-red-600 font-semibold p-4 rounded-lg border-2 border-red-200 transition">
+                <i class="fas fa-sign-out-alt text-xl"></i>
+                {% if lang == 'hi' %}लॉगआउट{% else %}Logout{% endif %}
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="notification-toast" style="display:none; opacity:0; transition: opacity 0.3s;"></div>
+
+<script>
+const lang = "{{ lang }}";
+
+// Toast function
+function showToast(message, type = "info") {
+    const toast = document.getElementById("notification-toast");
+    toast.textContent = message;
+    
+    if (type === "success") {
+        toast.className = "fixed top-8 right-8 z-50 px-6 py-4 rounded-lg bg-green-600 text-white text-lg shadow-lg";
+    } else if (type === "error") {
+        toast.className = "fixed top-8 right-8 z-50 px-6 py-4 rounded-lg bg-red-600 text-white text-lg shadow-lg";
+    } else {
+        toast.className = "fixed top-8 right-8 z-50 px-6 py-4 rounded-lg bg-blue-600 text-white text-lg shadow-lg";
+    }
+    
+    toast.style.display = "block";
+    toast.style.opacity = 1;
+    
+    setTimeout(() => {
+        toast.style.opacity = 0;
+        setTimeout(() => {
+            toast.style.display = "none";
+        }, 300);
+    }, 3000);
+}
+
+// Toggle edit mode
+document.getElementById('edit-btn').addEventListener('click', function() {
+    document.getElementById('view-mode').style.display = 'none';
+    document.getElementById('edit-mode').style.display = 'block';
+    this.style.display = 'none';
+});
+
+// Cancel edit
+document.getElementById('cancel-btn').addEventListener('click', function() {
+    document.getElementById('edit-mode').style.display = 'none';
+    document.getElementById('view-mode').style.display = 'block';
+    document.getElementById('edit-btn').style.display = 'block';
+});
+
+// Handle form submission
+document.getElementById('profile-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    try {
+        const response = await fetch('/api/update-profile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            showToast(lang === 'hi' ? 'प्रोफ़ाइल अपडेट हो गई!' : 'Profile updated successfully!', 'success');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            showToast(result.error || (lang === 'hi' ? 'अपडेट विफल रहा' : 'Update failed'), 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast(lang === 'hi' ? 'कुछ गलत हो गया' : 'Something went wrong', 'error');
+    }
+});
+
+// Language toggle
+function changeLanguage() {
+    const newLang = lang === 'hi' ? 'en' : 'hi';
+    window.location.href = `{{ url_for('profile') }}?lang=${newLang}`;
+}
+</script>
+{% endblock %}

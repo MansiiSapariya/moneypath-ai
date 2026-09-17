@@ -1,0 +1,682 @@
+{% extends "base.html" %}
+{% block title %}{% if session.get('lang') == 'hi' %}वित्तीय साक्षरता केंद्र{% else %}Financial Literacy Hub{% endif %} - MoneyPath AI{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-12 px-4">
+    <!-- Header Badge -->
+    <div class="text-center mb-8">
+        <span class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-6 py-2 rounded-full font-semibold text-sm shadow-sm border border-blue-200">
+            <i class="fas fa-book-open"></i>
+            {% if session.get('lang') == 'hi' %}निःशुल्क शिक्षा संसाधन{% else %}Free Learning Resources{% endif %}
+        </span>
+    </div>
+
+    <!-- Main Title -->
+    <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+            {% if session.get('lang') == 'hi' %}वित्तीय साक्षरता केंद्र{% else %}Financial Literacy Hub{% endif %}
+        </h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            {% if session.get('lang') == 'hi' %}
+                सरल, दृश्य मार्गदर्शिकाओं के साथ अपनी गति से सीखें
+            {% else %}
+                Learn at your own pace with simple, visual guides
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- Learning Cards Grid -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
+
+        <!-- Card 1: Saving & Budgeting -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-wallet text-blue-600 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">
+                            {% if session.get('lang') == 'hi' %}बचत और बजट{% else %}Saving & Budgeting{% endif %}
+                        </h3>
+                        <p class="text-sm text-gray-600">
+                            {% if session.get('lang') == 'hi' %}
+                                पैसे बचाने और अपने परिवार के लिए एक सरल बजट बनाने का तरीका जानें
+                            {% else %}
+                                Learn how to save money and create a simple budget for your family
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <button class="voice-btn text-gray-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-full transition" data-topic="saving">
+                    <i class="fas fa-volume-up text-xl"></i>
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <p class="text-sm font-semibold text-gray-700 mb-2">
+                    {% if session.get('lang') == 'hi' %}पाठ:{% else %}Lessons:{% endif %}
+                </p>
+                <ul class="space-y-2">
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="income-expenses">
+                        <i class="fas fa-circle text-blue-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}आय और व्यय को समझना{% else %}Understanding Income & Expenses{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="50-30-20-rule">
+                        <i class="fas fa-circle text-blue-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}50-30-20 नियम सरलीकृत{% else %}50-30-20 Rule Simplified{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="emergency-fund">
+                        <i class="fas fa-circle text-blue-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}आपातकालीन निधि बनाना{% else %}Building Emergency Fund{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="financial-diary">
+                        <i class="fas fa-circle text-blue-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}वित्तीय डायरी रखना{% else %}Keeping a Financial Diary{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="debt-management">
+                        <i class="fas fa-circle text-blue-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}कर्ज का समझदारी से प्रबंधन{% else %}Managing Debt Wisely{% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Card 2: Government Schemes -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-purple-600 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">
+                            {% if session.get('lang') == 'hi' %}सरकारी योजनाएं{% else %}Government Schemes{% endif %}
+                        </h3>
+                        <p class="text-sm text-gray-600">
+                            {% if session.get('lang') == 'hi' %}
+                                आपके लिए उपलब्ध लाभ और योजनाओं की खोज करें
+                            {% else %}
+                                Discover benefits and schemes available for you
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <button class="voice-btn text-gray-400 hover:text-purple-600 hover:bg-purple-50 p-2 rounded-full transition" data-topic="schemes">
+                    <i class="fas fa-volume-up text-xl"></i>
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <p class="text-sm font-semibold text-gray-700 mb-2">
+                    {% if session.get('lang') == 'hi' %}पाठ:{% else %}Lessons:{% endif %}
+                </p>
+                <ul class="space-y-2">
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="pm-kisan">
+                        <i class="fas fa-circle text-purple-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}पीएम किसान योजना{% else %}PM Kisan Yojana{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="sukanya-samriddhi">
+                        <i class="fas fa-circle text-purple-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}सुकन्या समृद्धि योजना{% else %}Sukanya Samriddhi Yojana{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="atal-pension">
+                        <i class="fas fa-circle text-purple-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}अटल पेंशन योजना{% else %}Atal Pension Yojana{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="jan-dhan">
+                        <i class="fas fa-circle text-purple-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}प्रधान मंत्री जन धन योजना{% else %}Pradhan Mantri Jan Dhan Yojana{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="ayushman-bharat">
+                        <i class="fas fa-circle text-purple-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}आयुष्मान भारत – निःशुल्क स्वास्थ्य कवर{% else %}Ayushman Bharat – Free Health Coverage{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="pm-mudra">
+                        <i class="fas fa-circle text-purple-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}पीएम मुद्रा योजना – व्यवसाय ऋण{% else %}PM Mudra Yojana – Business Loans{% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Card 3: Investment Basics -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-line text-green-600 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">
+                            {% if session.get('lang') == 'hi' %}निवेश की मूल बातें{% else %}Investment Basics{% endif %}
+                        </h3>
+                        <p class="text-sm text-gray-600">
+                            {% if session.get('lang') == 'hi' %}
+                                अपने पैसे को सुरक्षित रूप से बढ़ाने के लिए सरल परिचय
+                            {% else %}
+                                Simple introduction to growing your money safely
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <button class="voice-btn text-gray-400 hover:text-green-600 hover:bg-green-50 p-2 rounded-full transition" data-topic="investment">
+                    <i class="fas fa-volume-up text-xl"></i>
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <p class="text-sm font-semibold text-gray-700 mb-2">
+                    {% if session.get('lang') == 'hi' %}पाठ:{% else %}Lessons:{% endif %}
+                </p>
+                <ul class="space-y-2">
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="investment-basics">
+                        <i class="fas fa-circle text-green-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}निवेश क्या है?{% else %}What is Investment?{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="fd-vs-savings">
+                        <i class="fas fa-circle text-green-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}फिक्स्ड डिपॉजिट बनाम बचत{% else %}Fixed Deposits vs Savings{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="post-office">
+                        <i class="fas fa-circle text-green-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}डाकघर योजनाएं{% else %}Post Office Schemes{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="mutual-funds-simple">
+                        <i class="fas fa-circle text-green-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}म्यूचुअल फंड सरल बनाया{% else %}Mutual Funds Made Simple{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="gold-investment">
+                        <i class="fas fa-circle text-green-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}सोने में निवेश के स्मार्ट तरीके{% else %}Smart Ways to Invest in Gold{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="ppf-account">
+                        <i class="fas fa-circle text-green-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}पब्लिक प्रोविडेंट फंड (PPF){% else %}Public Provident Fund (PPF){% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Card 4: Financial Planning -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-cyan-600 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">
+                            {% if session.get('lang') == 'hi' %}वित्तीय योजना{% else %}Financial Planning{% endif %}
+                        </h3>
+                        <p class="text-sm text-gray-600">
+                            {% if session.get('lang') == 'hi' %}
+                                अपने परिवार के महत्वपूर्ण लक्ष्यों के लिए योजना बनाएं
+                            {% else %}
+                                Plan for your family's important goals
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <button class="voice-btn text-gray-400 hover:text-cyan-600 hover:bg-cyan-50 p-2 rounded-full transition" data-topic="planning">
+                    <i class="fas fa-volume-up text-xl"></i>
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <p class="text-sm font-semibold text-gray-700 mb-2">
+                    {% if session.get('lang') == 'hi' %}पाठ:{% else %}Lessons:{% endif %}
+                </p>
+                <ul class="space-y-2">
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="education-planning">
+                        <i class="fas fa-circle text-cyan-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}शिक्षा योजना{% else %}Education Planning{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="marriage-planning">
+                        <i class="fas fa-circle text-cyan-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}विवाह योजना{% else %}Marriage Planning{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="retirement-planning">
+                        <i class="fas fa-circle text-cyan-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}सेवानिवृत्ति योजना{% else %}Retirement Planning{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="health-insurance">
+                        <i class="fas fa-circle text-cyan-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}स्वास्थ्य बीमा की बुनियादी बातें{% else %}Health Insurance Basics{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="life-insurance">
+                        <i class="fas fa-circle text-cyan-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}परिवार सुरक्षा के लिए जीवन बीमा{% else %}Life Insurance for Family Protection{% endif %}
+                    </li>
+                    <li class="lesson-item bg-blue-50 text-gray-800 py-3 px-4 rounded-lg text-sm flex items-center gap-2 hover:bg-blue-100 transition cursor-pointer" data-lesson-id="financial-goals">
+                        <i class="fas fa-circle text-cyan-600 text-xs"></i>
+                        {% if session.get('lang') == 'hi' %}वित्तीय लक्ष्य निर्धारित करना{% else %}Setting Financial Goals{% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Floating Chatbot Button -->
+<a href="{{ url_for('chatbot_page', lang=session.get('lang', 'en')) }}"
+   id="floating-chat-btn"
+   class="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 flex items-center justify-center z-50 group"
+   style="text-decoration: none;">
+    <i class="fas fa-comments text-white text-2xl"></i>
+    <span class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold animate-pulse">!</span>
+</a>
+
+<!-- Styles -->
+<style>
+    #floating-chat-btn:hover .fa-comments {
+        animation: bounce 0.5s ease-in-out;
+    }
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+    .voice-btn.speaking {
+        background-color: #3b82f6 !important;
+        color: white !important;
+    }
+    .voice-btn.speaking i {
+        animation: pulse-icon 1s infinite;
+    }
+    @keyframes pulse-icon {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    @media (max-width: 640px) {
+        #floating-chat-btn {
+            width: 56px !important;
+            height: 56px !important;
+            bottom: 1.5rem !important;
+            right: 1.5rem !important;
+        }
+    }
+</style>
+
+<!-- Topic Text-to-Speech Script -->
+<script>
+const lang = "{{ session.get('lang', 'en') }}";
+let currentUtterance = null;
+
+const voiceContent = {
+    saving: {
+        hi: "बचत और बजट: पैसे बचाने और अपने परिवार के लिए एक सरल बजट बनाने का तरीका जानें। इसमें आय और व्यय को समझना, 50-30-20 नियम, और आपातकालीन निधि बनाना शामिल है। हर महीने अपनी आय का कम से कम 20 प्रतिशत बचाने की कोशिश करें।",
+        en: "Saving and Budgeting: Learn how to save money and create a simple budget for your family. This includes understanding income and expenses, the 50-30-20 rule, and building an emergency fund. Try to save at least 20 percent of your income every month."
+    },
+    schemes: {
+        hi: "सरकारी योजनाएं: आपके लिए उपलब्ध लाभ और योजनाओं की खोज करें जैसे पीएम किसान योजना, सुकन्या समृद्धि योजना, अटल पेंशन योजना, जन धन योजना और आयुष्मान भारत। ये योजनाएं आपके परिवार के वित्तीय भविष्य को सुरक्षित करने में मदद करती हैं।",
+        en: "Government Schemes: Discover benefits and schemes available for you like PM Kisan, Sukanya Samriddhi, Atal Pension, Jan Dhan and Ayushman Bharat. These schemes help secure your family's financial future."
+    },
+    investment: {
+        hi: "निवेश की मूल बातें: जानें कि निवेश क्या है, एफडी, डाकघर योजनाएं, म्यूचुअल फंड, सोना और पीपीएफ जैसे विकल्पों से पैसा कैसे बढ़ाया जा सकता है। छोटे से शुरू करें और नियमित रूप से निवेश करें।",
+        en: "Investment Basics: Learn what investment is and how options like FDs, post office schemes, mutual funds, gold and PPF can help your money grow. Start small and invest regularly."
+    },
+    planning: {
+        hi: "वित्तीय योजना: बच्चों की पढ़ाई, शादी, सेवानिवृत्ति और स्वास्थ्य जैसी जरूरतों के लिए पहले से योजना बनाएं। सही बीमा और निवेश के साथ मजबूत नींव बनाएं।",
+        en: "Financial Planning: Plan early for needs like children's education, marriage, retirement and health. Use the right insurance and investments to build a strong foundation."
+    }
+};
+
+document.querySelectorAll('.voice-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const topic = this.getAttribute('data-topic');
+        speakContent(topic, this);
+    });
+});
+
+function speakContent(topic, button) {
+    if (!('speechSynthesis' in window)) {
+        alert(lang === 'hi'
+            ? 'आपका ब्राउज़र ऑडियो का समर्थन नहीं करता'
+            : 'Your browser does not support audio');
+        return;
+    }
+    if (currentUtterance) {
+        window.speechSynthesis.cancel();
+        document.querySelectorAll('.voice-btn').forEach(b => b.classList.remove('speaking'));
+        currentUtterance = null;
+    }
+    if (button && button.classList.contains('speaking')) {
+        button.classList.remove('speaking');
+        return;
+    }
+    const text = voiceContent[topic][lang === 'hi' ? 'hi' : 'en'];
+    currentUtterance = new SpeechSynthesisUtterance(text);
+    currentUtterance.lang = lang === 'hi' ? 'hi-IN' : 'en-US';
+    currentUtterance.rate = 0.9;
+    currentUtterance.pitch = 1;
+    if (button) button.classList.add('speaking');
+    currentUtterance.onend = () => {
+        if (button) button.classList.remove('speaking');
+        currentUtterance = null;
+    };
+    window.speechSynthesis.speak(currentUtterance);
+}
+
+window.addEventListener('beforeunload', function() {
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+});
+</script>
+
+<!-- Lesson Detail Modal (scrollable content) -->
+<div id="lesson-modal"
+     class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col relative">
+    <button id="lesson-modal-close"
+            class="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
+      <i class="fas fa-times text-xl"></i>
+    </button>
+
+    <div class="px-8 pt-8 pb-4 flex items-center justify-between gap-4 shrink-0">
+      <h2 id="lesson-modal-title" class="text-2xl md:text-3xl font-bold text-gray-800"></h2>
+      <button id="lesson-voice-btn"
+              class="text-gray-500 hover:text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-full p-3 transition">
+        <i class="fas fa-volume-up text-lg"></i>
+      </button>
+    </div>
+
+    <!-- scrollable body -->
+    <div class="px-8 pb-8 space-y-6 overflow-y-auto">
+      <div class="rounded-xl overflow-hidden shadow-lg">
+        <img id="lesson-modal-image"
+             src=""
+             alt=""
+             class="w-full h-auto object-cover">
+      </div>
+
+      <div class="bg-blue-50 border border-blue-100 p-5 rounded-xl">
+        <p id="lesson-modal-intro" class="text-lg leading-relaxed text-gray-800"></p>
+      </div>
+
+      <div class="space-y-4">
+        <h3 id="lesson-steps-heading"
+            class="text-xl font-semibold text-blue-700">
+        </h3>
+        <div id="lesson-modal-steps" class="space-y-4"></div>
+      </div>
+
+      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
+        <h3 id="lesson-key-heading"
+            class="text-xl font-semibold text-emerald-700 flex items-center gap-2 mb-4">
+          <i class="fas fa-check-circle"></i>
+          <span></span>
+        </h3>
+        <ul id="lesson-modal-keypoints" class="space-y-3"></ul>
+      </div>
+
+      <div class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl p-5 text-center">
+        <p id="lesson-modal-cta" class="text-lg font-medium"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lesson Modal Logic with full lessonContentData -->
+<script>
+// Compressed version of lessonContentData from your TS file, mapped to this template.
+const lessons = {
+  "income-expenses": {
+    image: "{{ url_for('static', filename='images/lesson-saving-budgeting.jpg') }}",
+    title: {
+      en: "Understanding Income & Expenses",
+      hi: "आय और व्यय को समझना"
+    },
+    content: {
+      en: {
+        introduction: "Learning to track your money is the first step to financial freedom. Let's understand where your money comes from and where it goes.",
+        steps: [
+          {
+            title: "Track Your Income",
+            description: "Write down all money coming in - salary, wages, business income, rental income, or any other earnings. Count everything, even small amounts like selling vegetables or doing odd jobs."
+          },
+          {
+            title: "List Your Expenses",
+            description: "Note down everything you spend - rent, food, electricity, phone bills, children's education, medicines, transportation, and entertainment."
+          },
+          {
+            title: "Categorize Spending",
+            description: "Group expenses into: Essential (food, rent, medicine), Important (education, health), and Optional (entertainment, eating out, new clothes)."
+          },
+          {
+            title: "Find the Difference",
+            description: "Subtract total expenses from total income. If positive, you can save. If negative, you need to reduce expenses or find ways to increase income."
+          }
+        ],
+        keyPoints: [
+          "Track every rupee for at least one month",
+          "Use a notebook or mobile app to record daily",
+          "Review your spending every week",
+          "Involve your family in tracking expenses"
+        ],
+        callToAction: "Start tracking today! Use a simple notebook or ask a family member to help you."
+      },
+      hi: {
+        introduction: "अपने पैसे को ट्रैक करना सीखना वित्तीय स्वतंत्रता की पहली सीढ़ी है। आइए समझें कि आपका पैसा कहां से आता है और कहां जाता है।",
+        steps: [
+          {
+            title: "अपनी आय को ट्रैक करें",
+            description: "आने वाले सभी पैसे लिखें - वेतन, मजदूरी, व्यवसाय आय, किराया आय, या कोई अन्य कमाई। सब कुछ गिनें, छोटी रकम भी जैसे सब्जी बेचना या छोटे-मोटे काम।"
+          },
+          {
+            title: "अपने खर्चों की सूची बनाएं",
+            description: "आप जो कुछ भी खर्च करते हैं वह नोट करें - किराया, भोजन, बिजली, फोन बिल, बच्चों की शिक्षा, दवाएं, यातायात और मनोरंजन।"
+          },
+          {
+            title: "खर्च को वर्गीकृत करें",
+            description: "खर्चों को समूहित करें: आवश्यक (भोजन, किराया, दवाई), महत्वपूर्ण (शिक्षा, स्वास्थ्य), और वैकल्पिक (मनोरंजन, बाहर खाना, नए कपड़े)।"
+          },
+          {
+            title: "अंतर खोजें",
+            description: "कुल आय से कुल खर्च घटाएं। यदि सकारात्मक है, तो आप बचत कर सकते हैं। यदि नकारात्मक है, तो खर्च कम करने या आय बढ़ाने के तरीके खोजने की जरूरत है।"
+          }
+        ],
+        keyPoints: [
+          "कम से कम एक महीने तक हर रुपये को ट्रैक करें",
+          "रोजाना रिकॉर्ड करने के लिए नोटबुक या मोबाइल ऐप का उपयोग करें",
+          "हर हफ्ते अपने खर्च की समीक्षा करें",
+          "ट्रैकिंग में अपने परिवार को शामिल करें"
+        ],
+        callToAction: "आज से शुरू करें! एक साधारण नोटबुक का उपयोग करें या मोबाइल ऐप के साथ परिवार के किसी सदस्य से मदद लें।"
+      }
+    }
+  },
+
+  "50-30-20-rule": {
+    image: "{{ url_for('static', filename='images/lesson-50-30-20.jpg') }}",
+    title: {
+      en: "50-30-20 Rule Simplified",
+      hi: "50-30-20 नियम सरलीकृत"
+    },
+    content: {
+      en: {
+        introduction: "The 50-30-20 rule is a simple way to divide your income so you can live comfortably, enjoy life, and save for the future.",
+        steps: [
+          {
+            title: "50% for Needs (Essential)",
+            description: "Use half your income for must-have expenses: rent, food, electricity, water, medicines, and children's school fees. These are things you cannot avoid."
+          },
+          {
+            title: "30% for Wants (Lifestyle)",
+            description: "Use 30% for things that make life enjoyable: eating out, new clothes, mobile recharge, entertainment, festivals, and family outings."
+          },
+          {
+            title: "20% for Savings (Future)",
+            description: "Save at least 20% for emergencies, children's education, marriage, or retirement. This protects your family's future."
+          },
+          {
+            title: "Adjust Based on Your Life",
+            description: "If you have loans, you might need to save more and spend less on wants. Adjust the percentages to fit your situation."
+          }
+        ],
+        keyPoints: [
+          "Start small - even 10% savings is better than zero",
+          "Prioritize needs before wants",
+          "Keep savings in a separate account",
+          "Review and adjust every 3 months"
+        ],
+        callToAction: "Calculate your monthly income and divide it using this rule. Start today!"
+      },
+      hi: {
+        introduction: "50-30-20 नियम आपकी आय को विभाजित करने का एक सरल तरीका है ताकि आप आराम से रह सकें, जीवन का आनंद ले सकें और भविष्य के लिए बचत कर सकें।",
+        steps: [
+          {
+            title: "50% जरूरतों के लिए (आवश्यक)",
+            description: "अपनी आधी आय जरूरी खर्चों के लिए उपयोग करें: किराया, भोजन, बिजली, पानी, दवाएं, और बच्चों की स्कूल फीस। ये ऐसी चीजें हैं जिनसे आप बच नहीं सकते।"
+          },
+          {
+            title: "30% इच्छाओं के लिए (जीवनशैली)",
+            description: "30% उन चीजों के लिए उपयोग करें जो जीवन को आनंदमय बनाती हैं: बाहर खाना, नए कपड़े, मोबाइल रिचार्ज, मनोरंजन, त्योहार और पारिवारिक सैर।"
+          },
+          {
+            title: "20% बचत के लिए (भविष्य)",
+            description: "आपात स्थिति, बच्चों की शिक्षा, शादी या सेवानिवृत्ति के लिए कम से कम 20% बचाएं। यह आपके परिवार के भविष्य की रक्षा करता है।"
+          },
+          {
+            title: "अपने जीवन के अनुसार समायोजित करें",
+            description: "यदि आपके पास ऋण हैं, तो आपको अधिक बचत करने और इच्छाओं पर कम खर्च करने की आवश्यकता हो सकती है। प्रतिशत को अपनी स्थिति के अनुसार समायोजित करें।"
+          }
+        ],
+        keyPoints: [
+          "छोटे से शुरू करें - 10% बचत भी शून्य से बेहतर है",
+          "इच्छाओं से पहले जरूरतों को प्राथमिकता दें",
+          "बचत को अलग खाते में रखें",
+          "हर 3 महीने में समीक्षा और समायोजन करें"
+        ],
+        callToAction: "अपनी मासिक आय की गणना करें और इस नियम का उपयोग करके इसे विभाजित करें। आज से शुरू करें!"
+      }
+    }
+  },
+
+  /* The rest of the lessons follow the same shape as in lessonContentData:
+     emergency-fund, financial-diary, debt-management,
+     pm-kisan, sukanya-samriddhi, atal-pension, jan-dhan,
+     ayushman-bharat, pm-mudra,
+     investment-basics, fd-vs-savings, post-office,
+     mutual-funds-simple, gold-investment, ppf-account,
+     education-planning, marriage-planning, retirement-planning,
+     health-insurance, life-insurance, financial-goals
+     Fill them by copying the introduction, steps, keyPoints and callToAction
+     text from the TS file into this structure for both en/hi and point to
+     matching static images. [file:96]
+  */
+};
+
+const modal = document.getElementById("lesson-modal");
+const modalClose = document.getElementById("lesson-modal-close");
+const modalTitle = document.getElementById("lesson-modal-title");
+const modalImage = document.getElementById("lesson-modal-image");
+const modalIntro = document.getElementById("lesson-modal-intro");
+const modalSteps = document.getElementById("lesson-modal-steps");
+const modalKeyHeading = document.querySelector("#lesson-key-heading span");
+const modalKeyList = document.getElementById("lesson-modal-keypoints");
+const modalStepsHeading = document.getElementById("lesson-steps-heading");
+const modalCTA = document.getElementById("lesson-modal-cta");
+const lessonVoiceBtn = document.getElementById("lesson-voice-btn");
+let currentLessonId = null;
+
+function openLesson(lessonId) {
+  const data = lessons[lessonId];
+  if (!data) return;
+
+  const langKey = (lang === "hi") ? "hi" : "en";
+
+  currentLessonId = lessonId;
+  modalTitle.textContent = data.title[langKey];
+  modalImage.src = data.image;
+  modalImage.alt = data.title[langKey];
+  modalIntro.textContent = data.content[langKey].introduction;
+
+  modalStepsHeading.textContent =
+    lang === "hi" ? "चरण दर चरण मार्गदर्शिका" : "Step by Step Guide";
+
+  modalSteps.innerHTML = "";
+  (data.content[langKey].steps || []).forEach((step, idx) => {
+    const div = document.createElement("div");
+    div.className =
+      "bg-white border border-gray-200 rounded-xl p-4 flex gap-4 hover:shadow-sm transition";
+    div.innerHTML = `
+      <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
+        ${idx + 1}
+      </div>
+      <div class="flex-1">
+        <h4 class="font-semibold text-gray-800 mb-1">${step.title}</h4>
+        <p class="text-gray-600 text-sm leading-relaxed">${step.description}</p>
+      </div>
+    `;
+    modalSteps.appendChild(div);
+  });
+
+  modalKeyHeading.textContent =
+    lang === "hi" ? "याद रखने योग्य मुख्य बिंदु" : "Key Points to Remember";
+
+  modalKeyList.innerHTML = "";
+  (data.content[langKey].keyPoints || []).forEach(point => {
+    const li = document.createElement("li");
+    li.className = "flex items-start gap-3 text-gray-800";
+    li.innerHTML = `
+      <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2"></div>
+      <span>${point}</span>
+    `;
+    modalKeyList.appendChild(li);
+  });
+
+  modalCTA.textContent = data.content[langKey].callToAction;
+  modal.classList.remove("hidden");
+}
+
+function closeLesson() {
+  modal.classList.add("hidden");
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+modalClose.addEventListener("click", closeLesson);
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) closeLesson();
+});
+
+document.querySelectorAll(".lesson-item").forEach(item => {
+  item.addEventListener("click", function () {
+    const explicitId = this.getAttribute("data-lesson-id");
+    if (explicitId && lessons[explicitId]) {
+      openLesson(explicitId);
+    }
+  });
+});
+
+lessonVoiceBtn.addEventListener("click", () => {
+  if (!currentLessonId || !lessons[currentLessonId]) return;
+  if (!("speechSynthesis" in window)) {
+    alert(lang === "hi"
+      ? "आपका ब्राउज़र ऑडियो का समर्थन नहीं करता"
+      : "Your browser does not support audio");
+    return;
+  }
+  if (currentUtterance) {
+    window.speechSynthesis.cancel();
+    currentUtterance = null;
+  }
+  const data = lessons[currentLessonId];
+  const langKey = (lang === "hi") ? "hi" : "en";
+
+  // Simple TTS summary built from intro and first key point
+  const intro = data.content[langKey].introduction;
+  const kp = (data.content[langKey].keyPoints || [])[0] || "";
+  const text = intro + " " + kp;
+
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.lang = lang === "hi" ? "hi-IN" : "en-US";
+  currentUtterance.rate = 0.95;
+  currentUtterance.pitch = 1;
+  window.speechSynthesis.speak(currentUtterance);
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Language Selector - Dual Button, Both Always Visible -->
+<div class="flex justify-end px-8 pt-4 pb-4 bg-gradient-to-b from-[#eaf6fb] to-[#f8fbfd]">
+  <form method="GET" class="inline-flex rounded-lg shadow bg-white">
+    <button name="lang" value="en"
+      class="px-6 py-1 font-semibold text-lg rounded-l-lg border border-gray-300 transition
+        {% if lang == 'en' %}text-white{% else %}text-blue-700 hover:bg-blue-50{% endif %}"
+      {% if lang == 'en' %}style="background-color: #1793b8;"{% endif %}>
+      English
+    </button>
+    <button name="lang" value="hi"
+      class="px-6 py-1 font-semibold text-lg rounded-r-lg border-t border-b border-r border-gray-300 border-l-0 transition text-[#1793b8] {% if lang == 'hi' %}bg-white{% else %}hover:bg-blue-50{% endif %}"
+      {% if lang == 'hi' %}style="color: #1793b8;"{% endif %}>
+      हिंदी
+    </button>
+  </form>
+</div>
+
+<!-- Hero Section -->
+<section class="flex flex-col items-center justify-center min-h-[70vh] pt-12 pb-8 bg-gradient-to-b from-[#eaf6fb] to-[#f8fbfd]">
+    <!-- Home Page Voice Explanation Button -->
+    <button id="home-voice-btn"
+            class="fixed bottom-32 right-6 bg-white shadow-xl rounded-full p-4 border border-gray-200 hover:bg-blue-50 transition z-[9999]">
+        <i class="fas fa-volume-up text-2xl text-blue-700"></i>
+    </button>
+
+    <style>
+        #home-voice-btn.speaking {
+            background-color: #1793b8 !important;
+        }
+        #home-voice-btn.speaking i {
+            color: white !important;
+            animation: pulse-icon 1s infinite;
+        }
+        @keyframes pulse-icon {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+
+    <span class="inline-block px-6 py-2 mb-4 rounded-full bg-blue-100 text-blue-900 font-semibold shadow">
+        {% if lang == "hi" %}
+            हिन्दी और अंग्रेज़ी में उपलब्ध
+        {% else %}
+            Available in Hindi & English
+        {% endif %}
+    </span>
+    <h1 class="text-center text-5xl md:text-6xl font-extrabold text-gray-800 leading-tight mb-3">
+        {% if lang == "hi" %}
+            आपका विश्वसनीय<br>वित्तीय साथी
+        {% else %}
+            Your Trusted<br><span class="text-[#1793b8]">Financial Companion</span>
+        {% endif %}
+    </h1>
+    <p class="max-w-2xl text-center mt-2 mb-8 text-xl text-gray-600 font-medium">
+        {% if lang == "hi" %}
+            ग्रामीण, अर्ध-शहरी और वरिष्ठ भारतीयों के लिए एआई-सक्षम वित्तीय मार्गदर्शन, लक्ष्य योजना और सरकारी योजनाओं की सिफारिशें.
+        {% else %}
+            Empowering rural, semi-urban, and elderly Indians with AI-powered financial guidance, goal planning, and government scheme recommendations.
+        {% endif %}
+    </p>
+    <div class="flex flex-wrap gap-4 items-center justify-center mb-2">
+       <a href="{{ url_for('login', lang=lang) }}"
+            class="px-8 py-3 rounded-lg text-white text-lg font-semibold shadow-md transition bg-[#1793b8] hover:bg-[#147b97]">
+            {% if lang == "hi" %} शुरू करें {% else %} Get Started {% endif %}
+        </a>
+        <a href="{{ url_for('learning_hub', lang=lang) }}" class="px-8 py-3 rounded-lg bg-white border border-gray-200 text-[#1793b8] hover:text-blue-700 text-lg font-semibold shadow-md hover:bg-blue-50 transition">
+            {% if lang == "hi" %} लर्निंग हब देखें {% else %} Explore Learning Hub {% endif %}
+        </a>
+    </div>
+</section>
+
+<!-- Feature Card Grid: 6 cards like first image, circular icons like second -->
+<section class="py-16 px-3 bg-gradient-to-b from-[#f8fbfd] to-[#eaf6fb]">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-10 text-gray-800">
+        {% if lang == "hi" %}
+            वित्तीय आत्मविश्वास बनाने के लिए आपकी सभी ज़रूरतें
+        {% else %}
+            Everything You Need to Build Financial Confidence
+        {% endif %}
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <!-- Simple & Secure -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4"
+                 style="background: radial-gradient(circle at 30% 30%, #3b82f6, #0f766e);">
+                <i class="fas fa-shield-alt text-white text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">
+                {% if lang == "hi" %}सरल और सुरक्षित{% else %}Simple & Secure{% endif %}
+            </h3>
+            <p class="text-gray-600 text-sm md:text-base">
+                {% if lang == "hi" %}
+                    केवल आपके फोन नंबर से लॉगिन करें – पासवर्ड याद रखने की ज़रूरत नहीं। आपका डेटा हमेशा सुरक्षित रहता है।
+                {% else %}
+                    Login with just your phone number – no passwords to remember. Your data is always protected.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Bilingual Support -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4"
+                 style="background: radial-gradient(circle at 30% 30%, #f97316, #ec4899);">
+                <i class="fas fa-language text-white text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">
+                {% if lang == "hi" %}द्विभाषी सहायता{% else %}Bilingual Support{% endif %}
+            </h3>
+            <p class="text-gray-600 text-sm md:text-base">
+                {% if lang == "hi" %}
+                    हिन्दी या अंग्रेज़ी चुनें। सभी सुविधाएँ आपकी पसंदीदा भाषा में उपलब्ध हैं, वॉइस सपोर्ट के साथ।
+                {% else %}
+                    Choose Hindi or English. All features are available in your preferred language with voice support.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Goal Planning -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4"
+                 style="background: radial-gradient(circle at 30% 30%, #22c55e, #16a34a);">
+                <i class="fas fa-bullseye text-white text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">
+                {% if lang == "hi" %}लक्ष्य योजना{% else %}Goal Planning{% endif %}
+            </h3>
+            <p class="text-gray-600 text-sm md:text-base">
+                {% if lang == "hi" %}
+                    वित्तीय लक्ष्य बनाएं और उन्हें पूरा करने के लिए चरण-दर-चरण मार्गदर्शन प्राप्त करें।
+                {% else %}
+                    Set financial goals and get personalized guidance on how to achieve them step by step.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Smart Analytics -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4"
+                 style="background: radial-gradient(circle at 30% 30%, #3b82f6, #22c55e);">
+                <i class="fas fa-chart-line text-white text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">
+                {% if lang == "hi" %}स्मार्ट एनालिटिक्स{% else %}Smart Analytics{% endif %}
+            </h3>
+            <p class="text-gray-600 text-sm md:text-base">
+                {% if lang == "hi" %}
+                    अपने खर्च करने के पैटर्न समझें और अधिक प्रभावी ढंग से बचत करने के तरीके जानें।
+                {% else %}
+                    Understand your spending patterns and get insights on how to save more effectively.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- AI Assistant -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4"
+                 style="background: radial-gradient(circle at 30% 30%, #06b6d4, #6366f1);">
+                <i class="fas fa-robot text-white text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">
+                {% if lang == "hi" %}AI असिस्टेंट{% else %}AI Assistant{% endif %}
+            </h3>
+            <p class="text-gray-600 text-sm md:text-base">
+                {% if lang == "hi" %}
+                    किसी भी समय सवाल पूछें। योजनाओं, बचत और वित्तीय निर्णयों पर तुरंत जवाब पाएं।
+                {% else %}
+                    Ask questions anytime. Get instant answers about schemes, savings, and financial decisions.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Learning Hub -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4"
+                 style="background: radial-gradient(circle at 30% 30%, #22c55e, #0ea5e9);">
+                <i class="fas fa-book-open text-white text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">
+                {% if lang == "hi" %}लर्निंग हब{% else %}Learning Hub{% endif %}
+            </h3>
+            <p class="text-gray-600 text-sm md:text-base">
+                {% if lang == "hi" %}
+                    वित्तीय मूल बातें, सरकारी योजनाओं और मनी मैनेजमेंट के बारे में अपनी गति से सीखें।
+                {% else %}
+                    Learn about financial basics, government schemes, and money management at your own pace.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="bg-gradient-to-r from-[#1793b8] to-[#2cb39e] py-16 flex flex-col items-center justify-center text-white mt-10 shadow-lg">
+    <h3 class="text-3xl md:text-4xl font-extrabold mb-2 text-center">
+        {% if lang == "hi" %} आज ही अपनी वित्तीय यात्रा शुरू करें {% else %}Start Your Financial Journey Today{% endif %}
+    </h3>
+    <p class="text-xl mb-8 text-center font-medium">
+        {% if lang == "hi" %} हजारों भारतीय मनीपाथ AI के साथ अपने वित्तीय भविष्य को बेहतर बना रहे हैं. {% else %}Join thousands of Indians who are taking control of their financial future with MoneyPath AI.{% endif %}
+    </p>
+    <a href="{{ url_for('login', lang=lang) }}" class="bg-yellow-400 hover:bg-yellow-500 text-[#1793b8] font-bold px-8 py-4 rounded-lg shadow-md text-lg transition">
+        {% if lang == "hi" %} अभी साइन अप करें {% else %}Sign Up Now{% endif %}
+    </a>
+</section>
+
+<!-- Floating Chatbot Button -->
+<div id="chatbot-float-btn"
+     style="position: fixed; bottom: 24px; right: 24px; width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #1793b8 0%, #2cb39e 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 9999; cursor: pointer;">
+    <i class="fas fa-comments" style="color: white; font-size: 28px;"></i>
+</div>
+
+<style>
+#chatbot-float-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 15px 50px rgba(23, 147, 184, 0.5);
+}
+</style>
+
+<!-- Chatbot Button Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('chatbot-float-btn');
+    btn.addEventListener('click', function() {
+        window.location.href = '/chatbot?lang={{ lang }}';
+    });
+});
+</script>
+
+<!-- Home Page Voice Script -->
+<script>
+const homepageLang = "{{ lang }}";
+let homepageUtterance = null;
+
+const homepageVoiceText = {
+    en: `
+Welcome to MoneyPath AI — your trusted financial companion.
+This platform helps you simplify money management, track expenses, plan financial goals,
+and discover government schemes you are eligible for. 
+Whether you are from a rural area, a semi-urban region, or are a senior citizen,
+MoneyPath AI gives you simple guidance, clear analytics, and helpful lessons.
+Click Get Started to begin your financial journey today.
+    `,
+    hi: `
+MoneyPath AI में आपका स्वागत है — आपका विश्वसनीय वित्तीय साथी।
+यह प्लेटफ़ॉर्म आपके खर्चों को समझने, वित्तीय लक्ष्य बनाने,
+और आपके लिए उपलब्ध सरकारी योजनाओं की सलाह देने में मदद करता है।
+चाहे आप ग्रामीण क्षेत्र से हों, अर्ध-शहरी क्षेत्र से हों या वरिष्ठ नागरिक हों,
+MoneyPath AI आपको सरल मार्गदर्शन, स्पष्ट विश्लेषण और उपयोगी सीख प्रदान करता है।
+आज ही अपनी वित्तीय यात्रा शुरू करने के लिए ‘शुरू करें’ पर क्लिक करें।
+    `
+};
+
+document.getElementById("home-voice-btn").addEventListener("click", function () {
+
+    if (homepageUtterance) {
+        window.speechSynthesis.cancel();
+        homepageUtterance = null;
+        this.classList.remove("speaking");
+        return;
+    }
+
+    const text = homepageVoiceText[homepageLang === "hi" ? "hi" : "en"];
+
+    homepageUtterance = new SpeechSynthesisUtterance(text);
+    homepageUtterance.lang = homepageLang === "hi" ? "hi-IN" : "en-US";
+    homepageUtterance.rate = 0.95;
+    homepageUtterance.pitch = 1;
+
+    this.classList.add("speaking");
+
+    homepageUtterance.onend = () => {
+        this.classList.remove("speaking");
+        homepageUtterance = null;
+    };
+
+    window.speechSynthesis.speak(homepageUtterance);
+});
+
+window.addEventListener("beforeunload", () => {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+});
+</script>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}

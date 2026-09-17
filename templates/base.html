@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="{{ lang if lang else 'en' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MoneyPath AI{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation Bar - Hidden on Home Page Only -->
+    {% if request.endpoint != 'home' %}
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo (clickable, goes to Home) -->
+                <div class="flex items-center">
+                    <a href="{{ url_for('home', lang=lang if lang else 'en') }}" class="flex-shrink-0 flex items-center group">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                            <span class="text-white font-bold text-xl">M</span>
+                        </div>
+                        <span class="ml-3 text-xl font-bold text-gray-800 group-hover:text-[#1793b8] transition-colors">
+                            MoneyPath AI
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="{{ url_for('home', lang=lang if lang else 'en') }}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition flex items-center gap-2">
+                        <i class="fas fa-home"></i>
+                        <span>{% if lang == 'hi' %}होम{% else %}Home{% endif %}</span>
+                    </a>
+                    <a href="{{ url_for('dashboard', lang=lang if lang else 'en') }}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition flex items-center gap-2">
+                        <i class="fas fa-chart-line"></i>
+                        <span>{% if lang == 'hi' %}डैशबोर्ड{% else %}Dashboard{% endif %}</span>
+                    </a>
+                    <a href="{{ url_for('learning_hub', lang=lang if lang else 'en') }}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition flex items-center gap-2">
+                        <i class="fas fa-book-open"></i>
+                        <span>{% if lang == 'hi' %}लर्निंग हब{% else %}Learning Hub{% endif %}</span>
+                    </a>
+                    <a href="{{ url_for('chatbot_page', lang=lang if lang else 'en') }}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition flex items-center gap-2">
+                        <i class="fas fa-comments"></i>
+                        <span>{% if lang == 'hi' %}AI असिस्टेंट{% else %}AI Assistant{% endif %}</span>
+                    </a>
+                    <a href="{{ url_for('profile', lang=lang if lang else 'en') }}" class="px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition flex items-center gap-2">
+                        <i class="fas fa-user"></i>
+                        <span>{% if lang == 'hi' %}प्रोफाइल{% else %}Profile{% endif %}</span>
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-700 hover:text-blue-600 focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="{{ url_for('home', lang=lang if lang else 'en') }}" class="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                    <i class="fas fa-home mr-2"></i>{% if lang == 'hi' %}होम{% else %}Home{% endif %}
+                </a>
+                <a href="{{ url_for('dashboard', lang=lang if lang else 'en') }}" class="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                    <i class="fas fa-chart-line mr-2"></i>{% if lang == 'hi' %}डैशबोर्ड{% else %}Dashboard{% endif %}
+                </a>
+                <a href="{{ url_for('learning_hub', lang=lang if lang else 'en') }}" class="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                    <i class="fas fa-book-open mr-2"></i>{% if lang == 'hi' %}लर्निंग हब{% else %}Learning Hub{% endif %}
+                </a>
+                <a href="{{ url_for('chatbot_page', lang=lang if lang else 'en') }}" class="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                    <i class="fas fa-comments mr-2"></i>{% if lang == 'hi' %}AI असिस्टेंट{% else %}AI Assistant{% endif %}
+                </a>
+                <a href="{{ url_for('profile', lang=lang if lang else 'en') }}" class="block px-3 py-2 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+                    <i class="fas fa-user mr-2"></i>{% if lang == 'hi' %}प्रोफाइल{% else %}Profile{% endif %}
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="fixed top-20 right-6 z-[60] flex items-center bg-white rounded-lg p-1 shadow-lg border border-gray-200">
+        <a href="{{ url_for(request.endpoint, lang='en', **request.view_args) }}{% if request.query_string %}&{{ request.query_string.decode() }}{% endif %}"
+        class="px-4 py-2 rounded-md text-sm font-semibold transition-all duration-200
+                {{ 'bg-[#1793b8] text-white' if lang == 'en' else 'text-gray-600 hover:text-gray-800 hover:bg-gray-100' }}">
+            English
+        </a>
+        <a href="{{ url_for(request.endpoint, lang='hi', **request.view_args) }}{% if request.query_string %}&{{ request.query_string.decode() }}{% endif %}"
+        class="px-4 py-2 rounded-md text-sm font-semibold transition-all duration-200
+                {{ 'bg-[#1793b8] text-white' if lang == 'hi' else 'text-gray-600 hover:text-gray-800 hover:bg-gray-100' }}">
+            हिंदी
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Floating Chatbot Button - Only on Home Page -->
+    {% if request.endpoint == 'home' %}
+    <a href="{{ url_for('chatbot_page', lang=lang if lang else 'en') }}" 
+       id="floating-chat-btn"
+       class="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 flex items-center justify-center z-50 group"
+       style="text-decoration: none;">
+        <i class="fas fa-comments text-white text-2xl"></i>
+        <span class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold animate-pulse">!</span>
+    </a>
+
+    <style>
+        #floating-chat-btn:hover .fa-comments {
+            animation: bounce 0.5s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @media (max-width: 640px) {
+            #floating-chat-btn {
+                width: 56px !important;
+                height: 56px !important;
+                bottom: 1.5rem !important;
+                right: 1.5rem !important;
+            }
+        }
+    </style>
+    {% endif %}
+
+    <!-- Floating Chatbot Widget - Only on Dashboard Page -->
+    {% if request.endpoint == 'dashboard' %}
+    <div id="floating-chatbot-container">
+        <!-- Floating Chat Button -->
+        <button id="floating-chat-btn-dashboard" class="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 flex items-center justify-center z-50 group">
+            <i class="fas fa-comments text-white text-2xl"></i>
+            <span class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold animate-pulse">!</span>
+        </button>
+
+        <!-- Mini Chat Widget -->
+        <div id="mini-chat-widget" class="fixed bottom-24 right-6 w-96 bg-white rounded-2xl shadow-2xl hidden z-50 overflow-hidden" style="max-height: 600px;">
+            <!-- Chat Header -->
+            <div class="bg-gradient-to-r from-blue-500 to-cyan-600 p-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                        <i class="fas fa-robot text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-semibold">MoneyPath AI Assistant</h3>
+                        <p class="text-blue-100 text-xs">Online • Ready to help</p>
+                    </div>
+                </div>
+                <button id="close-mini-chat" class="text-white hover:bg-white/20 rounded-full p-2">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="p-4 bg-gray-50 border-b">
+                <p class="text-sm text-gray-600 mb-3">{% if lang == 'hi' %}मैं आपकी कैसे मदद कर सकता हूं?{% else %}How can I help you today?{% endif %}</p>
+                <div class="grid grid-cols-1 gap-2">
+                    <button class="quick-action-btn text-left p-3 bg-white rounded-lg hover:bg-blue-50 text-sm text-gray-700 border border-gray-200 transition">
+                        💰 {% if lang == 'hi' %}मैं अधिक पैसे कैसे बचा सकता हूं?{% else %}How can I save more money?{% endif %}
+                    </button>
+                    <button class="quick-action-btn text-left p-3 bg-white rounded-lg hover:bg-blue-50 text-sm text-gray-700 border border-gray-200 transition">
+                        🏛️ {% if lang == 'hi' %}मैं किन सरकारी योजनाओं के लिए पात्र हूं?{% else %}What government schemes am I eligible for?{% endif %}
+                    </button>
+                    <button class="quick-action-btn text-left p-3 bg-white rounded-lg hover:bg-blue-50 text-sm text-gray-700 border border-gray-200 transition">
+                        📊 {% if lang == 'hi' %}मेरे वित्तीय स्वास्थ्य स्कोर की व्याख्या करें{% else %}Explain my financial health score{% endif %}
+                    </button>
+                </div>
+                <a href="{{ url_for('chatbot_page', lang=lang if lang else 'en') }}" class="block mt-3 text-center text-blue-600 hover:text-blue-700 text-sm font-medium">
+                    {% if lang == 'hi' %}पूर्ण चैट खोलें →{% else %}Open full chat →{% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slideInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        #mini-chat-widget.show {
+            display: block !important;
+            animation: slideInUp 0.3s ease-out;
+        }
+
+        #floating-chat-btn-dashboard:hover .fa-comments {
+            animation: bounce 0.5s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+    {% endif %}
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', function() {
+                document.getElementById('mobile-menu').classList.toggle('hidden');
+            });
+        }
+
+        // Dashboard floating chatbot functionality
+        const floatingBtn = document.getElementById('floating-chat-btn-dashboard');
+        const miniChat = document.getElementById('mini-chat-widget');
+        const closeMiniChat = document.getElementById('close-mini-chat');
+        const quickActionBtns = document.querySelectorAll('.quick-action-btn');
+
+        if (floatingBtn) {
+            floatingBtn.addEventListener('click', function() {
+                miniChat.classList.toggle('show');
+                miniChat.classList.toggle('hidden');
+            });
+        }
+
+        if (closeMiniChat) {
+            closeMiniChat.addEventListener('click', function() {
+                miniChat.classList.add('hidden');
+                miniChat.classList.remove('show');
+            });
+        }
+
+        // Quick action buttons redirect to chatbot page
+        quickActionBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const question = this.textContent.trim().substring(2);
+                const currentLang = "{{ lang if lang else 'en' }}";
+                window.location.href = `{{ url_for('chatbot_page') }}?lang=${currentLang}&q=${encodeURIComponent(question)}`;
+            });
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

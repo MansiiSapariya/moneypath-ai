@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center h-96 text-center">
+  <h1 class="text-9xl font-extrabold text-blue-200 mb-6 select-none">404</h1>
+  <h2 class="text-3xl font-bold text-blue-700 mb-4">
+    {% if lang == 'hi' %}
+      [translate:पृष्ठ नहीं मिला]
+    {% else %}
+      Page Not Found
+    {% endif %}
+  </h2>
+  <p class="text-gray-600 mb-8 max-w-md">
+    {% if lang == 'hi' %}
+      [translate:क्षमा करें, जो पृष्ठ आप खोज रहे हैं वह मौजूद नहीं है या हटा दिया गया है।]
+    {% else %}
+      Sorry, the page you are looking for does not exist or has been removed.
+    {% endif %}
+  </p>
+  <a href="{{ url_for('home') }}" class="inline-block bg-gradient-to-r from-blue-500 to-green-500 text-white font-bold py-3 px-6 rounded-full hover:from-blue-600 hover:to-green-600 transition">
+    {% if lang == 'hi' %}
+      [translate:होम पर वापस जाएं]
+    {% else %}
+      Go Back Home
+    {% endif %}
+  </a>
+</div>
+{% endblock %}

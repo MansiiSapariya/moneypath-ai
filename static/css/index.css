@@ -1,0 +1,44 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f6fafd;
+    margin: 0;
+    padding: 0 2em;
+}
+header { padding: 2em 0 1em 0; }
+.cards { display: flex; gap: 1em; margin-bottom: 2em; }
+.card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    padding: 1em;
+    flex: 1;
+    min-width: 120px;
+    font-size: 1.25em;
+    text-align: center;
+}
+.goal { margin-bottom: 1em; }
+.progress-bar {
+    background: #eee;
+    border-radius: 6px;
+    height: 16px;
+    width: 300px;
+    margin: 6px 0;
+    position: relative;
+}
+.progress-bar div {
+    background: #2493ff;
+    height: 16px;
+    border-radius: 6px;
+}
+.reco-card {
+    background: #d4f1fa;
+    color: #175a7a;
+    padding: .75em 1em;
+    border-radius: 8px;
+    margin: 0.5em 0;
+}
+.explanation {
+    font-size: 0.9em;
+    color: #5c6a79;
+    margin-top: 0.75em;
+}

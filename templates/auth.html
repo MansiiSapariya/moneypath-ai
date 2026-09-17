@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-lg mt-8">
+    <h2 class="text-2xl font-bold text-center mb-8 text-blue-700">
+        {% if lang == "hi" %}[translate:पंजीकरण / लॉगिन]{% else %}Sign Up / Login{% endif %}
+    </h2>
+
+    <form id="auth-form" class="space-y-6">
+        <div class="flex justify-center mb-4">
+            <label class="mr-4">
+                <input type="radio" name="lang" value="en" {% if lang == "en" %}checked{% endif %}>
+                English
+            </label>
+            <label>
+                <input type="radio" name="lang" value="hi" {% if lang == "hi" %}checked{% endif %}>
+                हिंदी
+            </label>
+        </div>
+
+        <div>
+            <label class="block text-gray-700 font-semibold mb-2" for="phone">
+                {% if lang == "hi" %}[translate:फ़ोन नंबर]{% else %}Phone Number{% endif %}
+            </label>
+            <input type="text" id="phone" name="phone"
+                class="w-full border border-blue-300 rounded-lg px-4 py-2 text-lg focus:ring focus:ring-blue-100"
+                placeholder="{% if lang == 'hi' %}[translate:अपना 10-अंकों का फ़ोन नंबर दर्ज करें]{% else %}Enter your 10-digit phone number{% endif %}" required>
+        </div>
+
+        <button type="button" id="send-otp"
+            class="w-full mt-4 py-2 rounded-lg bg-gradient-to-r from-blue-400 to-blue-600 text-white font-bold text-lg hover:from-blue-500 hover:to-blue-700 transition">
+            {% if lang == "hi" %}[translate:ओटीपी भेजें]{% else %}Send OTP{% endif %}
+        </button>
+
+        <div id="otp-section" class="hidden mt-6">
+            <label class="block text-gray-700 font-semibold mb-2" for="otp">
+                {% if lang == "hi" %}[translate:ओटीपी]{% else %}OTP{% endif %}
+            </label>
+            <input type="text" id="otp" name="otp"
+                class="w-full border border-blue-300 rounded-lg px-4 py-2 text-lg focus:ring focus:ring-blue-100"
+                placeholder="{% if lang == 'hi' %}[translate:ओटीपी दर्ज करें]{% else %}Enter the OTP{% endif %}" required>
+            <button type="submit"
+                class="w-full mt-4 py-2 rounded-lg bg-gradient-to-r from-green-400 to-green-600 text-white font-bold text-lg hover:from-green-500 hover:to-green-700 transition">
+                {% if lang == "hi" %}[translate:जारी रखें]{% else %}Continue{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+<script>
+    // Example JS for Language Toggle and OTP Section
+    document.querySelectorAll('input[name="lang"]').forEach(el => {
+        el.addEventListener('change', function() {
+            window.location.search = '?lang=' + this.value;
+        });
+    });
+
+    document.getElementById('send-otp').addEventListener('click', function() {
+        document.getElementById('otp-section').classList.remove('hidden');
+        // Here you would add AJAX to send OTP.
+    });
+
+    document.getElementById('auth-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Handle OTP verification and redirect to onboarding.
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,850 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto mt-8 p-6 bg-white rounded-2xl shadow-lg">
+
+  <!-- Header row: title + actions -->
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h2 class="text-4xl font-bold text-gray-900 mb-0 text-left">
+        {% if lang == 'hi' %}
+          आपका वित्तीय डैशबोर्ड
+        {% else %}
+          Your Financial Dashboard
+        {% endif %}
+      </h2>
+      <p class="text-gray-700">
+        {% if lang == 'hi' %}
+          फिर से स्वागत है, {{ user.name or 'मित्र' }}!
+        {% else %}
+          Welcome back, {{ user.name or 'Friend' }}!
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a href="{{ url_for('transactions', lang=lang) }}" class="px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-100">
+          {% if lang == 'hi' %} लेन-देन {% else %} Transactions {% endif %}
+      </a>
+
+      <a href="{{ url_for('add_transaction', lang=lang) }}" class="px-3 py-2 rounded-lg bg-blue-600 text-sm font-medium text-white hover:bg-blue-700">
+          {% if lang == 'hi' %} नया लेन-देन {% else %} Add Transaction {% endif %}
+      </a>
+
+      <a href="{{ url_for('add_goal', lang=lang) }}" class="px-3 py-2 rounded-lg bg-green-600 text-sm font-medium text-white hover:bg-green-700">
+          {% if lang == 'hi' %} लक्ष्य जोड़ें {% else %} Add Goal {% endif %}
+      </a>
+    </div>
+  </div>
+
+  <!-- Metric Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="rounded-xl bg-white shadow-sm border border-gray-100 p-6 flex flex-col items-start">
+      <span class="font-semibold text-gray-500 mb-1">
+        {% if lang == 'hi' %} वित्तीय स्वास्थ्य स्कोर {% else %}Financial Health Score{% endif %}
+      </span>
+      <div class="flex items-center gap-3">
+        <span class="text-3xl font-bold text-green-600">{{ health_score or 72 }}</span>
+        <div class="flex-1">
+          <div class="w-24 h-2 rounded-lg bg-green-100 mt-1">
+            <div class="bg-green-500 h-2 rounded-lg" style="width: {{ health_score or 72 }}%;"></div>
+          </div>
+        </div>
+      </div>
+      <span class="text-sm text-gray-600 mt-2">
+        {% if lang == 'hi' %}
+            {% if health_score >= 70 %} अच्छा {% elif health_score >= 40 %} औसत {% else %} सुधार की आवश्यकता {% endif %}
+        {% else %}
+            {% if health_score >= 70 %} Good {% elif health_score >= 40 %} Average {% else %} Needs Improvement {% endif %}
+        {% endif %}
+      </span>
+    </div>
+
+    <div class="rounded-xl bg-white shadow-sm border border-gray-100 p-6 flex flex-col items-start">
+      <span class="font-semibold text-gray-500 mb-1">
+        {% if lang == 'hi' %} बचत दर {% else %}Savings Rate{% endif %}
+      </span>
+      <div class="flex items-center gap-2">
+        <i class="fas fa-piggy-bank text-blue-500 text-lg"></i>
+        <span class="text-3xl font-bold text-blue-700">{{ savings_rate|round(0) }}%</span>
+      </div>
+    </div>
+
+    <div class="rounded-xl bg-white shadow-sm border border-gray-100 p-6 flex flex-col items-start">
+      <span class="font-semibold text-gray-500 mb-1">
+        {% if lang == 'hi' %} मासिक आय {% else %}Monthly Income{% endif %}
+      </span>
+      <div class="flex items-center gap-2">
+        <i class="fas fa-chart-line text-green-500 text-lg"></i>
+        <span class="text-3xl font-bold text-green-600">₹{{ monthly_income|int|comma }}</span>
+      </div>
+    </div>
+
+    <div class="rounded-xl bg-white shadow-sm border border-gray-100 p-6 flex flex-col items-start">
+      <span class="font-semibold text-gray-500 mb-1">
+        {% if lang == 'hi' %} मासिक खर्च {% else %}Monthly Expenses{% endif %}
+      </span>
+      <div class="flex items-center gap-2">
+        <i class="fas fa-exclamation-circle text-yellow-500 text-lg"></i>
+        <span class="text-3xl font-bold text-yellow-500">₹{{ monthly_expenses|int|comma }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Goals + Scheme Recommendations -->
+  <div class="bg-gray-50 rounded-xl p-6 mb-8">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+      <i class="fas fa-bullseye"></i>
+      {% if lang == 'hi' %} आपके लक्ष्य {% else %}Your Goals{% endif %}
+    </h3>
+    <div>
+      {% for card in goal_cards %}
+        {% set goal = card.goal %}
+        {% set complete_pct = (goal.saved_amount / goal.target_amount * 100) if goal.target_amount > 0 else 0 %}
+        {% set remaining_amt = (goal.target_amount - goal.saved_amount) if goal.target_amount > 0 else 0 %}
+        <div class="mb-6 border-b pb-4">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-semibold text-gray-900">{{ goal.goal_name }}</span>
+            <span class="text-gray-500 text-sm">
+              ₹{{ goal.saved_amount|int|comma }} / ₹{{ goal.target_amount|int|comma }}
+            </span>
+          </div>
+          <div class="w-full h-4 bg-gray-300 rounded-lg relative">
+            <div class="bg-blue-700 h-4 rounded-lg absolute left-0 top-0"
+                 style="width: {{ complete_pct|round(0) }}%;"></div>
+            <div class="bg-yellow-400 h-4 rounded-lg absolute left-{{ complete_pct|round(0) }}% top-0"
+                 style="width: calc(100% - {{ complete_pct|round(0) }}%);"></div>
+          </div>
+          <span class="text-xs text-gray-700 mt-1 block">
+            {% if lang == 'hi' %}
+                {{ complete_pct|round(0) }}% पूरा हुआ ·
+                {% if remaining_amt > 0 %}
+                    शेष राशि: ₹{{ remaining_amt|int|comma }}
+                {% else %}
+                    लक्ष्य प्राप्त हो गया
+                {% endif %}
+            {% else %}
+                {{ complete_pct|round(0) }}% completed ·
+                {% if remaining_amt > 0 %}
+                    Remaining: ₹{{ remaining_amt|int|comma }}
+                {% else %}
+                    Goal reached
+                {% endif %}
+            {% endif %}
+          </span>
+
+          <!-- STRICT ELIGIBLE SCHEMES -->
+          {% if card.strict_schemes %}
+            <div class="mt-3">
+              <span class="text-sm font-semibold text-green-700">
+                {% if lang == 'hi' %} पात्र योजनाएँ {% else %}Eligible Schemes{% endif %}
+              </span>
+
+              <ul class="mt-2 space-y-1">
+                {% for s in card.strict_schemes %}
+                  <li>
+                    <button
+                      type="button"
+                      class="text-sm text-blue-700 hover:underline"
+                      onclick='openSchemeModal(
+                        {{ card.goal.goal_name | tojson }},
+                        {{ s.name | tojson }},
+                        {{ s.category | tojson }},
+                        {{ s.description | tojson }},
+                        {{ (", ".join(s.beneficiary_states or [])) | tojson }},
+                        {{ (", ".join(s.tags or [])) | tojson }},
+                        {{ s.remaining_amount | default(0) }},
+                        {{ s.months_without_scheme or 0 }},
+                        {{ s.months_with_scheme or 0 }},
+                        {{ s.ministry | default('') | tojson }},
+                        {{ s.scheme_type | default('') | tojson }},
+                        {{ s.valid_from | default('') | tojson }},
+                        {{ s.valid_to | default('') | tojson }},
+                        {{ s.target_group | default('') | tojson }},
+                        {{ s.eligibility | default('') | tojson }},
+                        {{ s.application_mode | default('') | tojson }},
+                        {{ s.documents | default('') | tojson }},
+                        {{ s.website | default('') | tojson }},
+                        {{ s.benefits | default('') | tojson }}
+                      )'>
+                      • {{ s.name }} ({{ s.category }})
+                    </button>
+                    {% if s.recommend_reason %}
+                      <div class="text-xs text-gray-500 ml-4">
+                        {{ s.recommend_reason }}
+                      </div>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          <!-- SOFT (EXPLORE) SCHEMES -->
+          {% if card.soft_schemes %}
+            <div class="mt-4">
+              <span class="text-sm font-semibold text-yellow-700">
+                {% if lang == 'hi' %} अन्य उपयोगी योजनाएँ {% else %}Other Useful Schemes (Explore){% endif %}
+              </span>
+
+              <ul class="mt-2 space-y-1">
+                {% for s in card.soft_schemes %}
+                  <li>
+                    <button
+                      type="button"
+                      class="text-sm text-blue-500 hover:underline"
+                      onclick='openSchemeModal(
+                        {{ card.goal.goal_name | tojson }},
+                        {{ s.name | tojson }},
+                        {{ s.category | tojson }},
+                        {{ s.description | tojson }},
+                        {{ (", ".join(s.beneficiary_states or [])) | tojson }},
+                        {{ (", ".join(s.tags or [])) | tojson }},
+                        {{ s.remaining_amount | default(0) }},
+                        {{ s.months_without_scheme or 0 }},
+                        {{ s.months_with_scheme or 0 }},
+                        {{ s.ministry | default('') | tojson }},
+                        {{ s.scheme_type | default('') | tojson }},
+                        {{ s.valid_from | default('') | tojson }},
+                        {{ s.valid_to | default('') | tojson }},
+                        {{ s.target_group | default('') | tojson }},
+                        {{ s.eligibility | default('') | tojson }},
+                        {{ s.application_mode | default('') | tojson }},
+                        {{ s.documents | default('') | tojson }},
+                        {{ s.website | default('') | tojson }},
+                        {{ s.benefits | default('') | tojson }}
+                      )'>
+                      • {{ s.name }} ({{ s.category }})
+                      <span class="text-xs text-yellow-600">Soft match</span>
+                    </button>
+                    {% if s.recommend_reason %}
+                      <div class="text-xs text-gray-500 ml-4">
+                        {{ s.recommend_reason }}
+                      </div>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+      {% else %}
+        <span class="text-gray-500 text-sm">
+          {% if lang == 'hi' %} अभी तक कोई लक्ष्य नहीं जोड़े गए हैं {% else %}No goals added yet{% endif %}
+        </span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Visual Analytics Section -->
+  <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
+    <h3 class="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+      <i class="fas fa-chart-bar"></i>
+      {% if lang == 'hi' %} विज़ुअल एनालिटिक्स {% else %}Visual Analytics{% endif %}
+    </h3>
+
+    <!-- Row 1: goals -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div class="bg-gray-50 rounded-xl shadow-sm p-6 flex flex-col">
+        <h4 class="font-semibold text-gray-700 mb-4 text-base">
+          {% if lang == "hi" %} लक्ष्य प्रगति तुलना {% else %}Goal Progress Comparison{% endif %}
+        </h4>
+        <canvas id="goalProgressChart" style="max-height:260px;"></canvas>
+      </div>
+
+      <div class="bg-gray-50 rounded-xl shadow-sm p-6 flex flex-col">
+        <h4 class="font-semibold text-gray-700 mb-4 text-base">
+          {% if lang == "hi" %} लक्ष्य प्राप्ति समय {% else %}Goal Achievement Timeline{% endif %}
+        </h4>
+        <canvas id="goalTimelineChart" style="max-height:260px;"></canvas>
+      </div>
+    </div>
+
+    <!-- Row 2: expenses -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <!-- Expense Breakdown -->
+      <div class="bg-gray-50 rounded-xl shadow-sm p-6 flex flex-col items-center justify-center">
+        <h4 class="font-semibold text-gray-700 mb-4 text-base self-start">
+          {% if lang == "hi" %} खर्च वितरण {% else %}Expense Breakdown{% endif %}
+        </h4>
+        <div class="flex justify-center items-center w-full">
+          <canvas id="expensePieChart"
+                  style="max-width:260px; max-height:260px;"></canvas>
+        </div>
+      </div>
+
+      <!-- Monthly Spend by Category -->
+      <div class="bg-gray-50 rounded-xl shadow-sm p-6 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <h4 class="font-semibold text-gray-700 text-base">
+            Monthly Spend by Category
+          </h4>
+          <select id="spendYearSelect"
+                  class="border border-gray-300 text-sm rounded-lg px-2 py-1">
+            {% for y in available_years %}
+              <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>
+                {{ y }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <canvas id="monthlySpendChart" style="max-height:260px;"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scheme Details Modal -->
+<div id="schemeModal"
+     class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col relative">
+    <button class="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+            onclick="closeSchemeModal()">
+      ✕
+    </button>
+
+    <!-- Header -->
+    <div class="px-6 pt-5 pb-3 border-b border-gray-200">
+      <h3 id="schemeModalTitle" class="text-xl font-bold text-gray-900 mb-1"></h3>
+      <p id="schemeModalCategory" class="text-sm text-gray-600"></p>
+      <p id="schemeModalStates" class="text-xs text-gray-500"></p>
+      <p id="schemeModalTags" class="text-xs text-gray-500 mt-1"></p>
+    </div>
+
+    <!-- Scrollable body -->
+    <div class="px-6 py-4 space-y-4 overflow-y-auto">
+
+      <div id="schemeMetaSection" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-700">
+        <p id="schemeModalMinistry"></p>
+        <p id="schemeModalType"></p>
+        <p id="schemeModalValidity"></p>
+        <p id="schemeModalTarget"></p>
+        <p id="schemeModalApplication"></p>
+        <p id="schemeModalDocuments"></p>
+        <p id="schemeModalWebsite" class="text-blue-600 underline cursor-pointer"></p>
+      </div>
+
+      <div>
+        <h4 class="text-sm font-semibold text-gray-800 mb-1">Eligibility</h4>
+        <p id="schemeModalEligibility" class="text-sm text-gray-700 leading-relaxed"></p>
+      </div>
+
+      <div>
+        <h4 class="text-sm font-semibold text-gray-800 mb-1">Benefits</h4>
+        <p id="schemeModalBenefits" class="text-sm text-gray-700 leading-relaxed"></p>
+      </div>
+
+      <div>
+        <h4 class="text-sm font-semibold text-gray-800 mb-1">About this Scheme</h4>
+        <p id="schemeModalDescription" class="text-sm text-gray-700 leading-relaxed"></p>
+      </div>
+
+      <div class="bg-gray-50 rounded-lg p-3 text-sm text-gray-800">
+        <div id="schemeModalRemaining" class="mb-1"></div>
+        <div id="schemeModalTimeline"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openSchemeModal(goalName, name, category, description,
+                          states, tags, remaining, monthsNoScheme, monthsWithScheme,
+                          ministry, schemeType, validFrom, validTo,
+                          targetGroup, eligibility, applicationMode,
+                          documents, website, benefits) {
+
+    // Header
+    document.getElementById('schemeModalTitle').textContent =
+      name || 'Scheme details';
+    document.getElementById('schemeModalCategory').textContent =
+      'Category: ' + (category || 'Not specified');
+    document.getElementById('schemeModalStates').textContent =
+      'Eligible States: ' + (states || 'Not specified');
+    document.getElementById('schemeModalTags').textContent =
+      tags ? ('Tags: ' + tags) : '';
+
+    // Meta grid (simple ones with fallbacks)
+    document.getElementById('schemeModalMinistry').textContent =
+      ministry ? ('Ministry/Department: ' + ministry) : 'Ministry/Department: Not specified';
+    document.getElementById('schemeModalType').textContent =
+      schemeType ? ('Scheme Type: ' + schemeType) : 'Scheme Type: Not specified';
+    document.getElementById('schemeModalValidity').textContent =
+      (validFrom || validTo)
+        ? ('Validity: ' + (validFrom || '?') + ' – ' + (validTo || 'Ongoing'))
+        : 'Validity: Not specified';
+    document.getElementById('schemeModalTarget').textContent =
+      targetGroup ? ('Target Group: ' + targetGroup) : 'Target Group: Not specified';
+
+    /// ---------- DOCUMENTS SECTION ----------
+    const docsEl = document.getElementById('schemeModalDocuments');
+    let docsText = (documents || '').trim();
+
+    if (!docsText) {
+        docsEl.textContent = 'Documents Required: Not specified';
+    } else {
+        // Remove "Documents Required:" prefix
+        docsText = docsText.replace(/^Documents Required[:\-]?\s*/i, '');
+
+        let parts = [];
+
+        // 1) Split on newlines
+        if (docsText.includes('\n')) {
+            parts = docsText.split(/\n+/).map(p => p.trim());
+        }
+
+        // 2) If STILL one big line, split on period
+        if (parts.length <= 1) {
+            parts = docsText.split(/\.\s+/).map(p => p.trim());
+        }
+
+        // 3) If still one entry, split on comma or semicolon
+        if (parts.length <= 1) {
+            parts = docsText.split(/[,;]\s*/).map(p => p.trim());
+        }
+
+        // 4) Remove empty items + remove leading numbers like "1."
+        parts = parts
+            .map(p => p.replace(/^\d+\.\s*/, '').trim())
+            .filter(p => p.length > 0);
+
+        let html = '<span class="font-semibold text-gray-800">Documents Required:</span><br>';
+
+        parts.forEach((item, idx) => {
+            html += '<span class="text-gray-700">• ' + item + '</span>';
+            if (idx < parts.length - 1) html += '<br>';
+        });
+
+        docsEl.innerHTML = html;
+    }
+
+
+    // Website
+    const websiteEl = document.getElementById('schemeModalWebsite');
+    if (website) {
+      websiteEl.textContent = website;
+      websiteEl.onclick = () => window.open(website, '_blank');
+    } else {
+      websiteEl.textContent = '';
+      websiteEl.onclick = null;
+    }
+
+    // Application steps: split and highlight "Step X:"
+    const applicationEl = document.getElementById('schemeModalApplication');
+    let formattedApplication = applicationMode || '';
+
+    if (formattedApplication) {
+      // Normalise Step 01 → Step 1 etc.
+      formattedApplication = formattedApplication.replace(/Step 0?(\d+)/g, 'Step $1');
+
+      // If the text itself has two sections, keep its own heading
+      const sections = formattedApplication.split(/(Process to track Application Status:)/i);
+
+      let html = '';
+
+      function renderSteps(text) {
+        const parts = text.split(/(Step \d+:)/g).filter(p => p.trim());
+        let out = '';
+        for (let i = 0; i < parts.length; i++) {
+          const p = parts[i].trim();
+          if (/^Step \d+:$/.test(p)) {
+            if (out) out += '<br><br>';
+            out += '<span class="font-semibold text-gray-800">' + p + '</span> ';
+          } else {
+            out += '<span class="text-gray-700">' + p + '</span>';
+          }
+        }
+        return out;
+      }
+
+      if (sections.length > 1) {
+        // First part: before "Process to track Application Status:"
+        html += renderSteps(sections[0]);
+
+        // Heading + second part
+        html += '<br><br><span class="font-semibold text-gray-800">Process to track Application Status:</span> ';
+        html += '<br><br>' + renderSteps(sections[2] || '');
+      } else if (formattedApplication.includes('Step 1')) {
+        html = renderSteps(formattedApplication);
+      } else {
+        html =
+          '<span class="font-semibold text-gray-800">Application Process:</span> ' +
+          '<span class="text-gray-700">' + formattedApplication + '</span>';
+      }
+
+      applicationEl.innerHTML = html;
+    } else {
+      applicationEl.textContent = 'Application Process: Not specified';
+    }
+
+
+    // Text sections
+    document.getElementById('schemeModalEligibility').textContent =
+      eligibility || 'Eligibility details not available.';
+    document.getElementById('schemeModalBenefits').textContent =
+      benefits || 'Benefit details not available.';
+    document.getElementById('schemeModalDescription').textContent =
+      description || 'Description not available.';
+
+    // Goal linkage
+    const remEl = document.getElementById('schemeModalRemaining');
+    if (remaining && remaining > 0) {
+      remEl.textContent =
+        'Amount remaining for "' + (goalName || 'this goal') +
+        '": ₹' + Number(remaining).toFixed(0);
+    } else {
+      remEl.textContent = 'Goal amount already achieved.';
+    }
+
+    const tlEl = document.getElementById('schemeModalTimeline');
+    if (monthsNoScheme && monthsWithScheme) {
+      tlEl.textContent =
+        'Estimated time to reach goal at current savings: ' +
+        monthsNoScheme + ' months. With this scheme, estimated: ' +
+        monthsWithScheme + ' months.';
+    } else if (monthsNoScheme) {
+      tlEl.textContent =
+        'Estimated time to reach goal at current savings: ' +
+        monthsNoScheme + ' months.';
+    } else {
+      tlEl.textContent = 'Not enough data to estimate timeline.';
+    }
+
+    // Show modal
+    const modal = document.getElementById('schemeModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeSchemeModal() {
+    const modal = document.getElementById('schemeModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  // 1. Goal Progress Comparison (Bar Chart)
+  const goalNames = [{% for card in goal_cards %}"{{ card.goal.goal_name }}",{% endfor %}];
+  const goalCompletePct = [{% for card in goal_cards %}
+    {{ ((card.goal.saved_amount / card.goal.target_amount) * 100)|round(0) if card.goal.target_amount > 0 else 0 }},
+  {% endfor %}];
+
+  const progressCanvas = document.getElementById('goalProgressChart');
+  if (progressCanvas && goalNames.length > 0) {
+    new Chart(progressCanvas.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: goalNames,
+        datasets: [{
+          label: '{% if lang=="hi" %} प्रगति {% else %}Progress %{% endif %}',
+          data: goalCompletePct,
+          backgroundColor: 'rgba(59,130,246,0.7)',
+          borderRadius: 7,
+        }]
+      },
+      options: {
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: true
+        },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { font: { size: 14 }, color: '#374151' } },
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { stepSize: 20, font: { size: 14 }, color: '#374151' }
+          }
+        }
+      }
+    });
+  }
+
+  // 2. Goal Achievement Timeline (Line Chart)
+  const goalTimeline = [{% for card in goal_cards %}
+    {{ card.months_to_goal if card.months_to_goal is not none else 0 }},
+  {% endfor %}];
+
+  const timelineCanvas = document.getElementById('goalTimelineChart');
+  if (timelineCanvas && goalNames.length > 0) {
+    new Chart(timelineCanvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: goalNames,
+        datasets: [{
+          label: '{% if lang=="hi" %} अनुमानित महीने{% else %}Estimated Months to Goal{% endif %}',
+          data: goalTimeline,
+          borderColor: 'rgba(16,185,129,1)',
+          backgroundColor: 'rgba(16,185,129,0.2)',
+          tension: 0.4,
+          fill: false,
+          pointRadius: 6,
+        }]
+      },
+      options: {
+        interaction: {
+          mode: 'nearest',
+          axis: 'x',
+          intersect: false
+        },
+        plugins: { legend: { display: true } },
+        scales: {
+          x: { ticks: { font: { size: 14 }, color: '#374151' } },
+          y: {
+            beginAtZero: true,
+            ticks: { font: { size: 14 }, color: '#374151' }
+          }
+        }
+      }
+    });
+  }
+
+  // 3. Expense Breakdown (Pie Chart)
+  const expenseCat = {{ expense_categories|tojson }};
+  const expenseAmt = {{ expense_amounts|tojson }};
+
+  const expenseCanvas = document.getElementById('expensePieChart');
+  if (expenseCanvas && expenseCat.length > 0) {
+    new Chart(expenseCanvas.getContext('2d'), {
+      type: 'pie',
+      data: {
+        labels: expenseCat,
+        datasets: [{
+          label: "Expenses",
+          data: expenseAmt,
+          backgroundColor: [
+            '#3b82f6', // Education
+            '#fbbf24', // Entertainment
+            '#22c55e', // Farming
+            '#ef4444', // Food
+            '#6366f1', // Household
+            '#f97316', // Insurance
+            '#0f766e', // Loan EMI
+            '#e11d48', // Medical
+            '#16a34a', // Other Expense
+            '#4b5563', // Rent
+            '#a855f7', // Shopping
+            '#06b6d4', // Transport
+            '#94a3b8'  // Utilities
+          ]
+        }]
+      },
+      options: {
+        interaction: {
+          mode: 'nearest',
+          intersect: true
+        },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { font: { size: 14 }, color: '#374151' },
+            onClick: (evt, legendItem, legend) => {
+              const index = legendItem.index;
+              const ci = legend.chart;
+              const meta = ci.getDatasetMeta(0);
+              meta.data[index].hidden = !meta.data[index].hidden;
+              ci.update();
+            }
+          },
+          tooltip: { enabled: true }
+        }
+      }
+    });
+  }
+
+  // 4. Monthly Spend by Category (Stacked Bar)
+  const monthlyLabels = {{ monthly_labels|tojson }};
+  const spendDataByCategory = {{ spend_datasets|tojson }};
+
+  const monthlyCanvas = document.getElementById('monthlySpendChart');
+  if (monthlyCanvas && monthlyLabels.length > 0) {
+    const palette = [
+      '#3b82f6', '#22c55e', '#f97316', '#ef4444',
+      '#6366f1', '#0f766e', '#e11d48', '#16a34a',
+      '#4b5563', '#a855f7', '#06b6d4', '#94a3b8'
+    ];
+
+    const datasets = Object.keys(spendDataByCategory).map((cat, idx) => ({
+      label: cat,
+      data: spendDataByCategory[cat],
+      backgroundColor: palette[idx % palette.length],
+      stack: 'spend'
+    }));
+
+    new Chart(monthlyCanvas.getContext('2d'), {
+      type: 'bar',
+      data: { labels: monthlyLabels, datasets },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom' }
+        },
+        scales: {
+          x: { stacked: true, ticks: { font: { size: 14 }, color: '#374151' } },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+            ticks: { font: { size: 14 }, color: '#374151' }
+          }
+        }
+      }
+    });
+  }
+
+  // handle year dropdown reload
+  const yearSelect = document.getElementById('spendYearSelect');
+  if (yearSelect) {
+    yearSelect.addEventListener('change', () => {
+      const year = yearSelect.value;
+      const url = new URL(window.location.href);
+      url.searchParams.set('year', year);
+      window.location.href = url.toString();
+    });
+  }
+</script>
+
+<!-- Floating Voice Assistant Button -->
+<button id="dashboard-voice-btn"
+  class="fixed bottom-28 right-6 bg-white shadow-xl rounded-full p-4 border border-gray-200 hover:bg-blue-50 z-[9999]">
+  <i class="fas fa-volume-up text-2xl text-blue-700"></i>
+</button>
+
+<style>
+  #dashboard-voice-btn.speaking {
+      background-color: #1793b8 !important;
+  }
+  #dashboard-voice-btn.speaking i {
+      color: white !important;
+      animation: pulse 1s infinite;
+  }
+  @keyframes pulse {
+      0%,100% { opacity: 1 }
+      50% { opacity: .5 }
+  }
+</style>
+
+<script>
+const D_LANG = "{{ lang }}";
+let dashUtterance = null;
+
+const DASHBOARD_VOICE = {
+    en: `
+Welcome back to your financial dashboard.
+
+Your Financial Health Score is {{ health_score or 72 }}.
+This means your financial condition is 
+{% if health_score >= 70 %} good {% elif health_score >= 40 %} average {% else %} needs improvement {% endif %}.
+
+Your savings rate is {{ savings_rate|round(0) }} percent.
+Your monthly income is rupees {{ monthly_income|int }}.
+Your monthly expenses are rupees {{ monthly_expenses|int }}.
+
+Let's talk about your goals.
+You currently have {{ goal_cards|length }} goals.
+{% for card in goal_cards %}
+Goal: {{ card.goal.goal_name }}.
+You have saved rupees {{ card.goal.saved_amount|int }} out of {{ card.goal.target_amount|int }}.
+This goal is {{ ((card.goal.saved_amount / card.goal.target_amount) * 100)|round(0) }} percent complete.
+
+{% if card.strict_schemes %}
+You are eligible for the following government schemes for this goal:
+{% for s in card.strict_schemes %}
+- {{ s.name }} in the category {{ s.category }}.
+{% endfor %}
+{% endif %}
+
+{% if card.soft_schemes %}
+There are also useful schemes you can explore:
+{% for s in card.soft_schemes %}
+- {{ s.name }} (Soft match).
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+
+Now about your visual analytics:
+Goal Progress Comparison shows how close you are to each goal.
+Goal Achievement Timeline estimates how many months each goal will take to achieve.
+Expense Breakdown shows how your spending is distributed across categories.
+Monthly Spend by Category shows how much you spent each month in different categories.
+
+This dashboard gives you a full snapshot of your income, spending, savings, and government benefits you can use.
+    `,
+
+    hi: `
+आपके वित्तीय डैशबोर्ड में फिर से स्वागत है।
+
+आपका वित्तीय स्वास्थ्य स्कोर {{ health_score or 72 }} है।
+इसका अर्थ है कि आपकी वित्तीय स्थिति 
+{% if health_score >= 70 %} अच्छी है {% elif health_score >= 40 %} औसत है {% else %} सुधार की आवश्यकता है {% endif %}।
+
+आपकी बचत दर {{ savings_rate|round(0) }} प्रतिशत है।
+आपकी मासिक आय ₹{{ monthly_income|int }} है।
+आपका मासिक खर्च ₹{{ monthly_expenses|int }} है।
+
+अब आपके लक्ष्यों के बारे में:
+आपके पास {{ goal_cards|length }} सक्रिय लक्ष्य हैं।
+{% for card in goal_cards %}
+लक्ष्य: {{ card.goal.goal_name }}।
+आपने ₹{{ card.goal.saved_amount|int }} बचाए हैं, लक्ष्य राशि ₹{{ card.goal.target_amount|int }} है।
+यह लक्ष्य {{ ((card.goal.saved_amount / card.goal.target_amount) * 100)|round(0) }}% पूरा हो चुका है।
+
+{% if card.strict_schemes %}
+आप इस लक्ष्य के लिए इन सरकारी योजनाओं के लिए पात्र हैं:
+{% for s in card.strict_schemes %}
+- {{ s.name }} (श्रेणी: {{ s.category }})
+{% endfor %}
+{% endif %}
+
+{% if card.soft_schemes %}
+कुछ अन्य उपयोगी योजनाएँ भी आपके लिए मददगार हो सकती हैं:
+{% for s in card.soft_schemes %}
+- {{ s.name }} (सॉफ्ट मैच)
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+
+अब विज़ुअल एनालिटिक्स:
+Goal Progress Comparison दिखाता है कि आप अपने प्रत्येक लक्ष्य के कितने करीब हैं।
+Goal Achievement Timeline बताता है कि हर लक्ष्य को पूरा करने में कितने महीने लग सकते हैं।
+Expense Breakdown आपके खर्चों का वितरण दिखाता है।
+Monthly Spend by Category दिखाता है कि प्रत्येक महीने आपने अलग-अलग श्रेणियों में कितना खर्च किया।
+
+यह डैशबोर्ड आपकी आय, खर्च, बचत और उपलब्ध सरकारी योजनाओं का पूरा सारांश प्रदान करता है।
+    `
+};
+
+function speakDashboardText() {
+    if (dashUtterance) {
+        window.speechSynthesis.cancel();
+        dashUtterance = null;
+    }
+
+    const msg = D_LANG === "hi" ? DASHBOARD_VOICE.hi : DASHBOARD_VOICE.en;
+
+    dashUtterance = new SpeechSynthesisUtterance(msg);
+    dashUtterance.lang = D_LANG === "hi" ? "hi-IN" : "en-US";
+    dashUtterance.rate = 0.95;
+
+    window.speechSynthesis.speak(dashUtterance);
+}
+
+const dashBtn = document.getElementById("dashboard-voice-btn");
+
+dashBtn.addEventListener("click", function () {
+    // Stop if already speaking
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        dashBtn.classList.remove("speaking");
+        return;
+    }
+
+    speakDashboardText();
+    dashBtn.classList.add("speaking");
+
+    dashUtterance.onend = () => {
+        dashBtn.classList.remove("speaking");
+    };
+});
+</script>
+{% endblock %}

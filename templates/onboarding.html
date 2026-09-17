@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-8">
+  <h2 class="text-3xl font-bold text-blue-700 mb-6 text-center">
+    {% if lang == 'hi' %}
+      [translate:स्वागत है! कृपया अपनी जानकारी भरें]
+    {% else %}
+      Welcome! Please Fill Your Details
+    {% endif %}
+  </h2>
+
+  <form id="onboarding-form" class="space-y-8">
+    <!-- Step 1: Basic info -->
+    <section>
+      <h3 class="text-xl font-semibold mb-4">
+        {% if lang == 'hi' %}[translate:आपका नाम और आयु]{% else %}Your Name and Age{% endif %}
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label for="name" class="block font-semibold mb-2 text-gray-700">
+            {% if lang == 'hi' %}[translate:नाम]{% else %}Name{% endif %}
+          </label>
+          <input type="text" id="name" name="name"
+            class="w-full border border-blue-300 rounded-lg px-4 py-2 text-lg focus:ring focus:ring-blue-100" required>
+          <button type="button" onclick="startSpeechRecognition('name')" class="mt-2 text-sm text-blue-600 hover:underline">
+            {% if lang == 'hi' %}[translate:माइक्रोफ़ोन से बात करें]{% else %}Speak to microphone{% endif %}
+          </button>
+        </div>
+        <div>
+          <label for="age" class="block font-semibold mb-2 text-gray-700">
+            {% if lang == 'hi' %}[translate:आयु]{% else %}Age{% endif %}
+          </label>
+          <input type="number" id="age" name="age" min="1" max="120"
+            class="w-full border border-blue-300 rounded-lg px-4 py-2 text-lg focus:ring focus:ring-blue-100" required>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2: Occupation and household size -->
+    <section>
+      <h3 class="text-xl font-semibold mb-4">
+        {% if lang == 'hi' %}[translate:काम और परिवार का आकार]{% else %}Occupation and Household Size{% endif %}
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label for="occupation" class="block font-semibold mb-2 text-gray-700">
+            {% if lang == 'hi' %}[translate:पेशा]{% else %}Occupation{% endif %}
+          </label>
+          <input type="text" id="occupation" name="occupation"
+            class="w-full border border-blue-300 rounded-lg px-4 py-2 text-lg focus:ring focus:ring-blue-100" required>
+          <button type="button" onclick="startSpeechRecognition('occupation')" class="mt-2 text-sm text-blue-600 hover:underline">
+            {% if lang == 'hi' %}[translate:माइक्रोफ़ोन से बात करें]{% else %}Speak to microphone{% endif %}
+          </button>
+        </div>
+        <div>
+          <label for="household" class="block font-semibold mb-2 text-gray-700">
+            {% if lang == 'hi' %}[translate:परिवार का आकार]{% else %}Household Size{% endif %}
+          </label>
+          <input type="number" id="household" name="household" min="1"
+            class="w-full border border-blue-300 rounded-lg px-4 py-2 text-lg focus:ring focus:ring-blue-100" required>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 3: Income and expenses -->
+    <section>
+      <h3 class="text-xl font-semibold mb-4">
+        {% if lang == 'hi' %}[translate:मासिक आय और खर्च]{% else %}Monthly Income and Expenses{% endif %}
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label for="income" class="block font-semibold mb-2 text-gray-700">
+            {% if lang == 'hi' %}[translate:मासिक आय]{% else %}Monthly Income{% endif %}
+          </label>
+          <input type="number" id="income" name="income" min="0"
+            class="w-full border border-blue-300 rounded-lg px-4 py-2 text-lg focus:ring focus:ring-blue-100" required>
+        </div>
+        <div>
+          <label for="expenses" class="block font-semibold mb-2 text-gray-700">
+            {% if lang == 'hi' %}[translate:मासिक खर्च]{% else %}Monthly Expenses{% endif %}
+          </label>
+          <input type="number" id="expenses" name="expenses" min="0"
+            class="w-full border border-blue-300 rounded-lg px-4 py-2 text-lg focus:ring focus:ring-blue-100" required>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 4: Financial goals -->
+    <section>
+      <h3 class="text-xl font-semibold mb-4">
+        {% if lang == 'hi' %}[translate:वित्तीय लक्ष्य और समय सीमा]{% else %}Financial Goals and Time Frame{% endif %}
+      </h3>
+      <textarea id="goals" name="goals" rows="4" placeholder="{% if lang == 'hi' %}[translate:अपने वित्तीय लक्ष्य बताएं जैसे शिक्षा, खेती, विवाह] {% else %}Enter your financial goals such as education, farming, marriage{% endif %}"
+        class="w-full border border-blue-300 rounded-lg px-4 py-2 text-lg focus:ring focus:ring-blue-100" required></textarea>
+      <input type="text" id="timeframe" name="timeframe" placeholder="{% if lang == 'hi' %}[translate:लक्ष्य के लिए समय सीमा जैसे 12 महीने] {% else %}Time frame for goals e.g. 12 months{% endif %}"
+        class="w-full mt-4 border border-blue-300 rounded-lg px-4 py-2 text-lg focus:ring focus:ring-blue-100" required>
+    </section>
+
+    <!-- Step 5: Existing loans or debts -->
+    <section>
+      <h3 class="text-xl font-semibold mb-4">
+        {% if lang == 'hi' %}[translate:मौजूदा ऋण या देनदारी]{% else %}Existing Loans or Debts{% endif %}
+      </h3>
+      <textarea id="loans" name="loans" rows="3" placeholder="{% if lang == 'hi' %}[translate:यदि कोई ऋण या देनदारी है तो विवरण दें] {% else %}Please specify if any loans or debts{% endif %}"
+        class="w-full border border-blue-300 rounded-lg px-4 py-2 text-lg focus:ring focus:ring-blue-100"></textarea>
+    </section>
+
+    <button type="submit" class="w-full mt-6 py-3 bg-gradient-to-r from-green-400 to-green-600 text-white font-bold rounded-lg hover:from-green-500 hover:to-green-700 transition">
+      {% if lang == 'hi' %}
+        [translate:जमा करें और आगे बढ़ें]
+      {% else %}
+        Submit and Continue
+      {% endif %}
+    </button>
+  </form>
+</div>
+
+<script>
+  function startSpeechRecognition(fieldId) {
+    if (!('webkitSpeechRecognition' in window)) {
+      alert("{% if lang == 'hi' %}आपका ब्राउज़र वॉइस इनपुट सपोर्ट नहीं करता.{% else %}Your browser does not support voice input.{% endif %}");
+      return;
+    }
+    var recognition = new webkitSpeechRecognition();
+    recognition.lang = '{{ "hi-IN" if lang == "hi" else "en-US" }}';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.start();
+
+    recognition.onresult = function(event) {
+      document.getElementById(fieldId).value = event.results[0][0].transcript;
+    };
+
+    recognition.onerror = function() {
+      alert("{% if lang == 'hi' %}वॉइस इनपुट में समस्या हुई.{% else %}Error in voice input.{% endif %}");
+    };
+  }
+
+  document.getElementById('onboarding-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Collect form data, send to backend and proceed to dashboard after success
+  });
+</script>
+{% endblock %}

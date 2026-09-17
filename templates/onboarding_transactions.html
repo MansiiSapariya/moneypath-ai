@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto mt-20">
+  {% if not simple_mode %}
+  <!-- Progress Header -->
+  <div class="text-center mb-12">
+    <div class="flex justify-center mb-6">
+      <div class="step w-12 h-12 bg-[#1793b8] text-white rounded-full flex items-center justify-center font-bold mr-4">1</div>
+      <div class="step active w-12 h-12 bg-[#1793b8] text-white rounded-full flex items-center justify-center font-bold mr-4">2</div>
+      <div class="step w-12 h-12 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center font-bold mr-4">3</div>
+    </div>
+    <h1 class="text-3xl md:text-4xl font-bold text-[#1793b8] mb-3">
+      {% if lang == 'hi' %}  अपनी लेनदेन जानकारी जोड़ें  {% else %}Add Your Transactions{% endif %}
+    </h1>
+    <p class="text-lg text-gray-600">
+      {% if lang == 'hi' %}  चरण 2/4 • हाल के लेनदेन दर्ज करें  {% else %}Step 2/3 • Enter your recent transactions{% endif %}
+    </p>
+    <div class="w-full bg-gray-200 rounded-full h-3 mt-4 mx-auto max-w-md">
+      <div class="bg-gradient-to-r from-[#1793b8]   to-blue-600 h-3 rounded-full transition-all duration-500" style="width: 50%"></div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Main Card -->
+  <div class="bg-white/80 backdrop-blur-md p-10 rounded-3xl shadow-2xl max-w-5xl mx-auto">
+    <form id="transactions-form" method="post" class="space-y-6">
+      <h2 class="text-2xl font-bold text-[#1793b8] mb-6 flex items-center">
+        <i class="fas fa-receipt mr-3 text-3xl"></i>
+        {% if lang == 'hi' %}  लेनदेन विवरण  {% else %}Transaction Details{% endif %}
+      </h2>
+
+      <div id="transactions-list">
+        <!-- Initial Transaction Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4 transaction-row">
+          <div class="flex flex-col">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  लेनदेन की तिथि  {% else %}Date of transaction{% endif %}
+            </label>
+            <input name="transactions-0-date" type="date"
+                   class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100" required>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  आय या खर्च राशि  {% else %}Income or expense amount{% endif %}
+            </label>
+            <input name="transactions-0-amount" type="number" step="0.01"
+                   class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100"
+                   placeholder="Amount" required>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  प्रकार  {% else %}Type{% endif %}
+            </label>
+            <select name="transactions-0-type"
+                    class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100" required>
+              <option value="">{% if lang == 'hi' %}  प्रकार चुनें  {% else %}Select Type{% endif %}</option>
+              <option value="Income">{% if lang == 'hi' %}  आय  {% else %}Income{% endif %}</option>
+              <option value="Expense">{% if lang == 'hi' %}  खर्च  {% else %}Expense{% endif %}</option>
+            </select>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  श्रेणी  {% else %}Category{% endif %}
+            </label>
+            <select name="transactions-0-category"
+                    class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100" required>
+              <option value="">{% if lang == 'hi' %}  श्रेणी चुनें  {% else %}Select Category{% endif %}</option>
+              <option value="Food">{% if lang == 'hi' %}  भोजन  {% else %}Food{% endif %}</option>
+              <option value="Utilities">{% if lang == 'hi' %}  यूटिलिटीज  {% else %}Utilities{% endif %}</option>
+              <option value="Farming">{% if lang == 'hi' %}  खेती  {% else %}Farming{% endif %}</option>
+              <option value="Medical">{% if lang == 'hi' %}  चिकित्सा  {% else %}Medical{% endif %}</option>
+              <option value="Education">{% if lang == 'hi' %}  शिक्षा  {% else %}Education{% endif %}</option>
+            </select>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  भुगतान का तरीका  {% else %}Mode of Payment{% endif %}
+            </label>
+            <select name="transactions-0-mode_of_payment"
+                    class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100" required>
+              <option value="">{% if lang == 'hi' %}  तरीका चुनें  {% else %}Select Method{% endif %}</option>
+              <option value="Cash">{% if lang == 'hi' %}  नकद  {% else %}Cash{% endif %}</option>
+              <option value="UPI">UPI</option>
+              <option value="Bank">{% if lang == 'hi' %}  बैंक  {% else %}Bank{% endif %}</option>
+            </select>
+          </div>
+          <div class="flex flex-col md:col-span-2">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  विवरण (वैकल्पिक)  {% else %}Description (optional){% endif %}
+            </label>
+            <input name="transactions-0-notes"
+                   class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100"
+                   placeholder="{% if lang == 'hi' %}  नोट्स या विवरण  {% else %}Notes or details{% endif %}">
+          </div>
+        </div>
+      </div>
+
+     <div class="mt-8 flex flex-col gap-4">
+        <!-- Add another transaction -->
+        <button
+          type="button"
+          class="w-full sm:w-auto px-6 py-3 bg-[#06BEA1] text-white rounded-full font-semibold hover:bg-[#049a83] transition"
+          onclick="addTransactionRow()"
+        >
+          {% if lang == 'hi' %} और जोड़ें {% else %}Add Another Transaction{% endif %}
+        </button>
+
+        {% if not simple_mode %}
+          <!-- Next step: only in onboarding -->
+          <button
+            type="submit"
+            class="w-full flex-1 px-8 py-4 rounded-full text-white font-semibold
+                  bg-gradient-to-r from-[#09B39B] via-[#1793b8] to-[#4F9DFE]
+                  shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.01] hover:from-[#147b97]"
+          >
+            {% if lang == 'hi' %} अगला चरण: लक्ष्य जोड़ें → {% else %}Next Step: Add Goals →{% endif %}
+          </button>
+          {% else %}
+          <!-- Simple submit when opened from dashboard -->
+          <button
+            type="submit"
+            class="w-full flex-1 px-8 py-4 rounded-full text-white font-semibold
+                  bg-gradient-to-r from-[#09B39B] via-[#1793b8] to-[#4F9DFE]
+                  shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.01] hover:from-[#147b97]"
+          >
+            {% if lang == 'hi' %} लेनदेन सहेजें {% else %}Save Transactions{% endif %}
+          </button>
+          {% endif %}
+        </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .step.active { box-shadow: 0 0 0 4px rgba(23, 147, 184, 0.3); }
+  .step { transition: all 0.3s ease; }
+</style>
+
+<script>
+let transIdx = 1;
+function addTransactionRow() {
+  const isHindi = "{{ lang }}" === "hi";
+
+  const tList = document.getElementById('transactions-list');
+  const div = document.createElement('div');
+  div.className = "grid grid-cols-1 md:grid-cols-2 gap-6 mb-4 transaction-row";
+
+  div.innerHTML = `
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-semibold">${isHindi ? "लेनदेन की तिथि" : "Date of Transaction"}</label>
+      <input name="transactions-${transIdx}-date" type="date"
+             class="border border-gray-300 rounded-lg px-3 py-2" required>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-semibold">${isHindi ? "आय या खर्च राशि" : "Income or Expense Amount"}</label>
+      <input name="transactions-${transIdx}-amount" type="number" step="0.01"
+             class="border border-gray-300 rounded-lg px-3 py-2"
+             placeholder="${isHindi ? "राशि" : "Amount"}" required>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-semibold">${isHindi ? "प्रकार" : "Type"}</label>
+      <select name="transactions-${transIdx}-type"
+              class="border border-gray-300 rounded-lg px-3 py-2" required>
+        <option value="">${isHindi ? "प्रकार चुनें" : "Select Type"}</option>
+        <option value="Income">${isHindi ? "आय" : "Income"}</option>
+        <option value="Expense">${isHindi ? "खर्च" : "Expense"}</option>
+      </select>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-semibold">${isHindi ? "श्रेणी" : "Category"}</label>
+      <select name="transactions-${transIdx}-category"
+              class="border border-gray-300 rounded-lg px-3 py-2" required>
+        <option value="">${isHindi ? "श्रेणी चुनें" : "Select Category"}</option>
+        <option value="Food">${isHindi ? "भोजन" : "Food"}</option>
+        <option value="Utilities">${isHindi ? "यूटिलिटीज" : "Utilities"}</option>
+        <option value="Farming">${isHindi ? "खेती" : "Farming"}</option>
+        <option value="Medical">${isHindi ? "चिकित्सा" : "Medical"}</option>
+        <option value="Education">${isHindi ? "शिक्षा" : "Education"}</option>
+      </select>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-semibold">${isHindi ? "भुगतान का तरीका" : "Mode of Payment"}</label>
+      <select name="transactions-${transIdx}-mode_of_payment"
+              class="border border-gray-300 rounded-lg px-3 py-2" required>
+        <option value="">${isHindi ? "तरीका चुनें" : "Select Method"}</option>
+        <option value="Cash">${isHindi ? "नकद" : "Cash"}</option>
+        <option value="UPI">UPI</option>
+        <option value="Bank">${isHindi ? "बैंक" : "Bank"}</option>
+      </select>
+    </div>
+
+    <div class="flex flex-col md:col-span-2">
+      <label class="mb-1 text-sm font-semibold">${isHindi ? "विवरण (वैकल्पिक)" : "Description (optional)"}</label>
+      <input name="transactions-${transIdx}-notes"
+             class="border border-gray-300 rounded-lg px-3 py-2"
+             placeholder="${isHindi ? "नोट्स या विवरण" : "Notes or details"}">
+    </div>
+
+    <div class="flex items-center">
+      <button type="button"
+              onclick="this.closest('.transaction-row').remove()"
+              class="text-red-600 font-bold px-3 py-1 mt-6">X</button>
+    </div>
+  `;
+
+  tList.appendChild(div);
+  transIdx++;
+
+  speakText(VOICE_TEXT.afterAdd);   // 🔊 Auto-speak after adding row
+}
+</script>
+
+<button id="txn-voice-btn"
+  class="fixed bottom-28 right-6 bg-white shadow-xl rounded-full p-4 border border-gray-200 hover:bg-blue-50 z-[9999]">
+  <i class="fas fa-volume-up text-2xl text-blue-700"></i>
+</button>
+
+<style>
+#txn-voice-btn.speaking { background-color: #1793b8 !important; }
+#txn-voice-btn.speaking i { color: white !important; animation: pulse 1s infinite; }
+@keyframes pulse { 0%, 100%{opacity:1} 50%{opacity:.5} }
+</style>
+
+<script>
+const T_LANG = "{{ lang }}";
+let txnUtterance = null;
+
+const VOICE_TEXT = {
+  intro: {
+    en: "Please enter your recent transactions. You can add more using Add Another Transaction.",
+    hi: "कृपया अपने हाल के लेनदेन दर्ज करें। आप 'और जोड़ें' पर क्लिक करके और जानकारी जोड़ सकते हैं।"
+  },
+  afterAdd: {
+    en: "A new transaction row has been added.",
+    hi: "एक नया लेनदेन फ़ॉर्म जोड़ दिया गया है।"
+  }
+};
+
+function speakText(t) {
+  if (txnUtterance) {
+    window.speechSynthesis.cancel();
+    txnUtterance = null;
+  }
+
+  const text = T_LANG === "hi" ? t.hi : t.en;
+
+  txnUtterance = new SpeechSynthesisUtterance(text);
+  txnUtterance.lang = T_LANG === "hi" ? "hi-IN" : "en-US";
+  txnUtterance.rate = 0.95;
+
+  window.speechSynthesis.speak(txnUtterance);
+}
+
+// ✅ ONLY THIS CLICK LISTENER SHOULD EXIST
+const btn = document.getElementById("txn-voice-btn");
+
+btn.addEventListener("click", function () {
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        btn.classList.remove("speaking");
+        return;
+    }
+
+    speakText(VOICE_TEXT.intro);
+    btn.classList.add("speaking");
+
+    txnUtterance.onend = () => {
+        btn.classList.remove("speaking");
+    };
+});
+</script>
+
+{% endblock %}

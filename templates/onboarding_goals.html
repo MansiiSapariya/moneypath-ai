@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto mt-20">
+  {% if not simple_mode %}
+  <!-- Progress Header -->
+  <div class="text-center mb-12">
+    <div class="flex justify-center mb-6">
+      <div class="step w-12 h-12 bg-[#1793b8] text-white rounded-full flex items-center justify-center font-bold mr-4">1</div>
+      <div class="step w-12 h-12 bg-[#1793b8] text-white rounded-full flex items-center justify-center font-bold mr-4">2</div>
+      <div class="step active w-12 h-12 bg-[#1793b8] text-white rounded-full flex items-center justify-center font-bold mr-4">3</div>
+    </div>
+    <h1 class="text-3xl md:text-4xl font-bold text-[#1793b8] mb-3">
+      {% if lang == 'hi' %}  अपने वित्तीय लक्ष्य तय करें  {% else %}Set Your Financial Goals{% endif %}
+    </h1>
+    <p class="text-lg text-gray-600">
+      {% if lang == 'hi' %}  चरण 3/4 • अपने लक्ष्य और समय सीमा जोड़ें  {% else %}Step 3/3 • Add your goals and timelines{% endif %}
+    </p>
+    <div class="w-full bg-gray-200 rounded-full h-3 mt-4 mx-auto max-w-md">
+      <div class="bg-gradient-to-r from-[#1793b8] to-blue-600 h-3 rounded-full transition-all duration-500" style="width: 75%"></div>
+    </div>
+  </div>
+  {% endif %}
+  <!-- Main Card -->
+  <div class="bg-white/80 backdrop-blur-md p-10 rounded-3xl shadow-2xl max-w-5xl mx-auto">
+    <form id="goals-form" method="post" class="space-y-6">
+      <h2 class="text-2xl font-bold text-[#1793b8] mb-6 flex items-center">
+        <i class="fas fa-bullseye mr-3 text-3xl"></i>
+        {% if lang == 'hi' %}  वित्तीय लक्ष्य  {% else %}Financial Goals{% endif %}
+      </h2>
+
+      <div id="goals-list">
+        <!-- Initial Goal Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4 goal-row">
+          <div class="flex flex-col">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  लक्ष्य का नाम  {% else %}Goal Name{% endif %}
+            </label>
+            <input name="goals-0-goal_name"
+                   class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100"
+                   placeholder="{% if lang == 'hi' %}  जैसे - ट्रैक्टर खरीदना, घर बनाना  {% else %}e.g., Buy Tractor, Build House{% endif %}"
+                   required>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  लक्ष्य राशि  {% else %}Target Amount{% endif %}
+            </label>
+            <input name="goals-0-target_amount" type="number" step="0.01"
+                   class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100"
+                   placeholder="{% if lang == 'hi' %}  कुल लक्ष्य राशि  {% else %}Goal target{% endif %}"
+                   required>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  अब तक बचत  {% else %}Saved Amount{% endif %}
+            </label>
+            <input name="goals-0-saved_amount" type="number" step="0.01"
+                   class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100"
+                   placeholder="{% if lang == 'hi' %}  अभी तक की बचत  {% else %}Current progress{% endif %}"
+                   required>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  शुरू होने की तिथि  {% else %}Start Date{% endif %}
+            </label>
+            <input name="goals-0-start_date" type="date"
+                   class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100" required>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  समाप्ति तिथि  {% else %}Deadline{% endif %}
+            </label>
+            <input name="goals-0-deadline" type="date"
+                   class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100" required>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  लक्ष्य प्रकार  {% else %}Goal Type{% endif %}
+            </label>
+            <select name="goals-0-goal_type"
+                    class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100" required>
+              <option value="">{% if lang == 'hi' %}  प्रकार चुनें  {% else %}Select Type{% endif %}</option>
+              <option value="Short-term">{% if lang == 'hi' %}  अल्पकालिक  {% else %}Short-term{% endif %}</option>
+              <option value="Long-term">{% if lang == 'hi' %}  दीर्घकालिक  {% else %}Long-term{% endif %}</option>
+            </select>
+          </div>
+          <div class="flex flex-col">
+            <label class="mb-1 text-sm font-semibold">
+              {% if lang == 'hi' %}  प्राथमिकता  {% else %}Priority{% endif %}
+            </label>
+            <select name="goals-0-priority"
+                    class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100" required>
+              <option value="">{% if lang == 'hi' %}  प्राथमिकता चुनें  {% else %}Select Priority{% endif %}</option>
+              <option value="High">{% if lang == 'hi' %}  उच्च  {% else %}High{% endif %}</option>
+              <option value="Medium">{% if lang == 'hi' %}  मध्यम  {% else %}Medium{% endif %}</option>
+              <option value="Low">{% if lang == 'hi' %}  कम  {% else %}Low{% endif %}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-col gap-4">
+        <!-- Add another goal -->
+        <button
+          type="button"
+          class="w-full sm:w-auto px-6 py-3 bg-[#06BEA1] text-white rounded-full font-semibold hover:bg-[#049a83] transition"
+          onclick="addGoalRow()" 
+        >
+          {% if lang == 'hi' %} और लक्ष्य जोड़ें {% else %}Add Another Goal{% endif %}
+        </button>
+        {% if not simple_mode %}
+          <!-- Onboarding finish button -->
+          <button
+            type="submit"
+            class="w-full flex-1 px-8 py-4 rounded-full text-white font-semibold
+                  bg-gradient-to-r from-[#09B39B] via-[#1793b8] to-[#4F9DFE]
+                  shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.01] hover:from-[#147b97]"
+          >
+            {% if lang == 'hi' %}
+              समाप्त करें और डैशबोर्ड पर जाएँ →
+            {% else %}
+              Finish & Go to Dashboard →
+            {% endif %}
+          </button>
+          {% else %}
+          <!-- Simple save button when opened from dashboard -->
+          <button
+            type="submit"
+            class="w-full flex-1 px-8 py-4 rounded-full text-white font-semibold
+                  bg-gradient-to-r from-[#09B39B] via-[#1793b8] to-[#4F9DFE]
+                  shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.01] hover:from-[#147b97]"
+          >
+            {% if lang == 'hi' %} लक्ष्य सहेजें {% else %}Save Goals{% endif %}
+          </button>
+          {% endif %}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  .step.active { box-shadow: 0 0 0 4px rgba(23, 147, 184, 0.3); }
+  .step { transition: all 0.3s ease; }
+</style>
+
+<script>
+let goalIdx = 1;
+function addGoalRow() {
+  const isHindi = "{{ lang }}" === "hi";
+
+  const gList = document.getElementById('goals-list');
+  const div = document.createElement('div');
+  div.className = "grid grid-cols-1 md:grid-cols-2 gap-6 mb-4 goal-row";
+
+  div.innerHTML = `
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-semibold">
+        ${isHindi ? "लक्ष्य का नाम" : "Goal Name"}
+      </label>
+      <input name="goals-${goalIdx}-goal_name"
+             class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100"
+             placeholder="${isHindi ? "जैसे - ट्रैक्टर खरीदना, घर बनाना" : "e.g., Buy Tractor, Build House"}" required>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-semibold">
+        ${isHindi ? "लक्ष्य राशि" : "Target Amount"}
+      </label>
+      <input name="goals-${goalIdx}-target_amount" type="number" step="0.01"
+             class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100"
+             placeholder="${isHindi ? "कुल लक्ष्य राशि" : "Goal target"}" required>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-semibold">
+        ${isHindi ? "अब तक बचत" : "Saved Amount"}
+      </label>
+      <input name="goals-${goalIdx}-saved_amount" type="number" step="0.01"
+             class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100"
+             placeholder="${isHindi ? "अभी तक की बचत" : "Current progress"}" required>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-semibold">${isHindi ? "शुरू होने की तिथि" : "Start Date"}</label>
+      <input name="goals-${goalIdx}-start_date" type="date"
+             class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100"
+             required>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-semibold">${isHindi ? "समाप्ति तिथि" : "Deadline"}</label>
+      <input name="goals-${goalIdx}-deadline" type="date"
+             class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100"
+             required>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-semibold">${isHindi ? "लक्ष्य प्रकार" : "Goal Type"}</label>
+      <select name="goals-${goalIdx}-goal_type"
+              class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100"
+              required>
+        <option value="">${isHindi ? "प्रकार चुनें" : "Select Type"}</option>
+        <option value="Short-term">${isHindi ? "अल्पकालिक" : "Short-term"}</option>
+        <option value="Long-term">${isHindi ? "दीर्घकालिक" : "Long-term"}</option>
+      </select>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-semibold">${isHindi ? "प्राथमिकता" : "Priority"}</label>
+      <select name="goals-${goalIdx}-priority"
+              class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-100"
+              required>
+        <option value="">${isHindi ? "प्राथमिकता चुनें" : "Select Priority"}</option>
+        <option value="High">${isHindi ? "उच्च" : "High"}</option>
+        <option value="Medium">${isHindi ? "मध्यम" : "Medium"}</option>
+        <option value="Low">${isHindi ? "कम" : "Low"}</option>
+      </select>
+    </div>
+
+    <div class="flex items-center">
+      <button type="button"
+              onclick="this.closest('.goal-row').remove()"
+              class="text-red-600 font-bold px-3 py-1 mt-6">X</button>
+    </div>
+  `;
+
+  gList.appendChild(div);
+  goalIdx++;
+}
+</script>
+
+
+<!-- Floating Voice Assistant Button -->
+<button id="onboard-voice-btn"
+        class="fixed bottom-28 right-6 bg-white shadow-xl rounded-full p-4 border border-gray-200 hover:bg-blue-50 transition z-[9999]">
+    <i class="fas fa-volume-up text-2xl text-blue-700"></i>
+</button>
+
+<style>
+    #onboard-voice-btn.speaking {
+        background-color: #1793b8 !important;
+    }
+    #onboard-voice-btn.speaking i {
+        color: white !important;
+        animation: pulse-icon 1s infinite;
+    }
+    @keyframes pulse-icon {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+</style>
+
+<script>
+const onboardLang = "{{ lang }}";
+let onboardUtterance = null;
+
+/* ==========================================================
+   Bilingual Voice Instructions
+   ========================================================== */
+const VOICE_TEXT = {
+    intro: {
+        en: `
+You are now setting your financial goals.
+Please enter goal name, target amount, savings so far, 
+start date, deadline, goal type and priority.
+You can add multiple goals by clicking Add Another Goal.
+When finished, click the Finish and Go to Dashboard button.`,
+        hi: `
+आप अब अपने वित्तीय लक्ष्य भर रहे हैं।
+कृपया लक्ष्य का नाम, कुल राशि, अब तक की बचत,
+शुरू होने की तिथि, समाप्ति तिथि, लक्ष्य प्रकार और प्राथमिकता दर्ज करें।
+आप चाहें तो और लक्ष्य जोड़ सकते हैं।
+सब कुछ पूरा होने पर, नीचे दिए गए बटन पर क्लिक करके आगे बढ़ें।`
+    },
+
+    afterAddGoal: {
+        en: `A new goal has been added. You may now fill its details or add more goals.`,
+        hi: `एक नया लक्ष्य जोड़ दिया गया है। अब आप इसके विवरण भर सकते हैं या और लक्ष्य जोड़ सकते हैं।`
+    }
+};
+
+/* ==========================================================
+   Detect if a NEW GOAL was just added
+   ========================================================== */
+let lastGoalCount = document.querySelectorAll(".goal-row").length;
+
+setInterval(() => {
+    const currentCount = document.querySelectorAll(".goal-row").length;
+    if (currentCount > lastGoalCount) {
+        speakText(VOICE_TEXT.afterAddGoal);
+    }
+    lastGoalCount = currentCount;
+}, 500);
+
+/* ==========================================================
+   Voice Speaking Function
+   ========================================================== */
+function speakText(textObj) {
+    if (onboardUtterance) {
+        window.speechSynthesis.cancel();
+        onboardUtterance = null;
+        document.getElementById("onboard-voice-btn").classList.remove("speaking");
+    }
+
+    const text = onboardLang === "hi" ? textObj.hi : textObj.en;
+
+    onboardUtterance = new SpeechSynthesisUtterance(text);
+    onboardUtterance.lang = onboardLang === "hi" ? "hi-IN" : "en-US";
+    onboardUtterance.rate = 0.95;
+    onboardUtterance.pitch = 1.0;
+
+    const btn = document.getElementById("onboard-voice-btn");
+    btn.classList.add("speaking");
+
+    onboardUtterance.onend = () => {
+        btn.classList.remove("speaking");
+        onboardUtterance = null;
+    };
+
+    window.speechSynthesis.speak(onboardUtterance);
+}
+
+/* ==========================================================
+   Floating Button Click
+   ========================================================== */
+document.getElementById("onboard-voice-btn").addEventListener("click", function () {
+    if (onboardUtterance) {
+        window.speechSynthesis.cancel();
+        onboardUtterance = null;
+        this.classList.remove("speaking");
+        return;
+    }
+    speakText(VOICE_TEXT.intro);
+});
+
+/* ==========================================================
+   Stop audio when leaving page
+   ========================================================== */
+window.addEventListener("beforeunload", () => {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+});
+</script>
+
+{% endblock %}

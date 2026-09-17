@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto mt-20">
+  <!-- Progress Header -->
+  <div class="text-center mb-12">
+    <div class="flex justify-center mb-6">
+      <div class="step active w-12 h-12 bg-[#1793b8] text-white rounded-full flex items-center justify-center font-bold mr-4">1</div>
+      <div class="step w-12 h-12 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center font-bold mr-4">2</div>
+      <div class="step w-12 h-12 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center font-bold mr-4">3</div>
+    </div>
+    <h1 class="text-4xl font-bold text-[#1793b8] mb-4">
+      {% if lang == 'hi' %} आपकी पूरी प्रोफाइल बनाएं{% else %}Complete Your Full Profile{% endif %}
+    </h1>
+    <p class="text-xl text-gray-600 mb-2">
+      {% if lang == 'hi' %} चरण 1/4 • हमें आपकी वित्तीय स्थिति समझने दें{% else %}Step 1/3 • Help us understand your financial situation{% endif %}
+    </p>
+    <div class="w-full bg-gray-200 rounded-full h-3 mt-4 mx-auto max-w-md">
+      <div class="bg-gradient-to-r from-[#1793b8] to-blue-600 h-3 rounded-full transition-all duration-500" style="width: 25%"></div>
+    </div>
+  </div>
+
+  <!-- Error Display -->
+  {% if error %}
+  <div class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-2xl mb-8 mx-auto max-w-2xl">
+    {% if lang == 'hi' %} त्रुटि: {{ error }} {% else %}Error: {{ error }}{% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Main Form -->
+  <div class="bg-white/80 backdrop-blur-md p-10 rounded-3xl shadow-2xl max-w-5xl mx-auto">
+    <form id="user-form" method="POST" class="space-y-8">
+      
+      <!-- SECTION 1: Personal Information -->
+      <div class="border-b pb-8">
+        <h2 class="text-2xl font-bold text-[#1793b8] mb-6 flex items-center">
+          <i class="fas fa-user-circle mr-3 text-3xl"></i>
+          {% if lang == 'hi' %} व्यक्तिगत जानकारी {% else %}Personal Information{% endif %}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} पूर्ण नाम {% else %}Full Name{% endif %} <span class="text-red-500">*</span>
+            </label>
+            <input type="text" name="name" required 
+                   placeholder="{% if lang == 'hi' %} अपना पूरा नाम डालें {% else %}Enter your full name{% endif %}"
+                   class="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-[#1793b8] transition-all">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} आयु {% else %}Age{% endif %} <span class="text-red-500">*</span>
+            </label>
+            <input type="number" name="age" min="18" max="100" required
+                   class="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} लिंग {% else %}Gender{% endif %}
+            </label>
+            <select name="gender" class="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100">
+              <option value="">{% if lang == 'hi' %} लिंग चुने {% else %}Select Gender{% endif %}</option>
+              <option value="male">{% if lang == 'hi' %} पुरुष {% else %}Male{% endif %}</option>
+              <option value="female">{% if lang == 'hi' %} महिला {% else %}Female{% endif %}</option>
+              <option value="other">{% if lang == 'hi' %} अन्य {% else %}Other{% endif %}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} वैवाहिक स्थिति {% else %}Marital Status{% endif %}
+            </label>
+            <select name="marital_status" class="w-full p-4 border border-gray-300 rounded-xl">
+              <option value="">{% if lang == 'hi' %} स्थिति चुनें {% else %}Select Status{% endif %}</option>
+              <option value="single">{% if lang == 'hi' %} अविवाहित {% else %}Single{% endif %}</option>
+              <option value="married">{% if lang == 'hi' %} विवाहित {% else %}Married{% endif %}</option>
+              <option value="other">{% if lang == 'hi' %} अन्य {% else %}Other{% endif %}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} शिक्षा स्तर {% else %}Education Level{% endif %}
+            </label>
+            <select name="education_level" class="w-full p-4 border border-gray-300 rounded-xl">
+              <option value="">{% if lang == 'hi' %} शिक्षा चुनें {% else %}Select Education{% endif %}</option>
+              <option value="below_10th">{% if lang == 'hi' %} 10वीं से कम {% else %}Below 10th{% endif %}</option>
+              <option value="10th_12th">{% if lang == 'hi' %} 10वीं/12वीं {% else %}10th/12th{% endif %}</option>
+              <option value="graduate">{% if lang == 'hi' %} स्नातक {% else %}Graduate{% endif %}</option>
+              <option value="postgraduate">{% if lang == 'hi' %} स्नातकोत्तर {% else %}Postgraduate{% endif %}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: Occupation & Household -->
+      <div class="border-b pb-8">
+        <h2 class="text-2xl font-bold text-[#1793b8] mb-6 flex items-center">
+          <i class="fas fa-briefcase mr-3 text-3xl"></i>
+          {% if lang == 'hi' %} व्यवसाय और परिवार {% else %}Occupation & Household{% endif %}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} व्यवसाय {% else %}Occupation{% endif %} <span class="text-red-500">*</span>
+            </label>
+            <input type="text" name="occupation" required 
+                   placeholder="{% if lang == 'hi' %} जैसे - सॉफ्टवेयर इंजीनियर, किसान {% else %}e.g., Software Engineer, Farmer{% endif %}"
+                   class="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} क्षेत्र {% else %}Sector{% endif %}
+            </label>
+            <select name="sector" class="w-full p-4 border border-gray-300 rounded-xl">
+              <option value="">{% if lang == 'hi' %} क्षेत्र चुनें {% else %}Select Sector{% endif %}</option>
+              <option value="agriculture">{% if lang == 'hi' %} कृषि {% else %}Agriculture{% endif %}</option>
+              <option value="services">{% if lang == 'hi' %} सेवाएं {% else %}Services{% endif %}</option>
+              <option value="manufacturing">{% if lang == 'hi' %} उत्पादन {% else %}Manufacturing{% endif %}</option>
+              <option value="government">{% if lang == 'hi' %} सरकार {% else %}Government{% endif %}</option>
+              <option value="informal">{% if lang == 'hi' %} अनौपचारिक {% else %}Informal{% endif %}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} परिवार का आकार {% else %}Household Size{% endif %} <span class="text-red-500">*</span>
+            <input type="number" name="household_size" min="1" max="20" required
+                   class="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} राज्य {% else %}State{% endif %}
+            </label>
+            <select name="state" id="state-select" class="w-full p-4 border border-gray-300 rounded-xl">
+              <option value="">{% if lang == 'hi' %} राज्य चुनें {% else %}Select State{% endif %}</option>
+
+              <option value="Andhra Pradesh">{% if lang == 'hi' %} आंध्र प्रदेश {% else %}Andhra Pradesh{% endif %}</option>
+              <option value="Arunachal Pradesh">{% if lang == 'hi' %} अरुणाचल प्रदेश {% else %}Arunachal Pradesh{% endif %}</option>
+              <option value="Assam">{% if lang == 'hi' %} असम {% else %}Assam{% endif %}</option>
+              <option value="Bihar">{% if lang == 'hi' %} बिहार {% else %}Bihar{% endif %}</option>
+              <option value="Chhattisgarh">{% if lang == 'hi' %} छत्तीसगढ़ {% else %}Chhattisgarh{% endif %}</option>
+              <option value="Goa">{% if lang == 'hi' %} गोवा {% else %}Goa{% endif %}</option>
+              <option value="Gujarat">{% if lang == 'hi' %} गुजरात {% else %}Gujarat{% endif %}</option>
+              <option value="Haryana">{% if lang == 'hi' %} हरियाणा {% else %}Haryana{% endif %}</option>
+              <option value="Himachal Pradesh">{% if lang == 'hi' %} हिमाचल प्रदेश {% else %}Himachal Pradesh{% endif %}</option>
+              <option value="Jharkhand">{% if lang == 'hi' %} झारखंड {% else %}Jharkhand{% endif %}</option>
+              <option value="Karnataka">{% if lang == 'hi' %} कर्नाटक {% else %}Karnataka{% endif %}</option>
+              <option value="Kerala">{% if lang == 'hi' %} केरल {% else %}Kerala{% endif %}</option>
+              <option value="Madhya Pradesh">{% if lang == 'hi' %} मध्य प्रदेश {% else %}Madhya Pradesh{% endif %}</option>
+              <option value="Maharashtra">{% if lang == 'hi' %} महाराष्ट्र {% else %}Maharashtra{% endif %}</option>
+              <option value="Manipur">{% if lang == 'hi' %} मणिपुर {% else %}Manipur{% endif %}</option>
+              <option value="Meghalaya">{% if lang == 'hi' %} मेघालय {% else %}Meghalaya{% endif %}</option>
+              <option value="Mizoram">{% if lang == 'hi' %} मिज़ोरम {% else %}Mizoram{% endif %}</option>
+              <option value="Nagaland">{% if lang == 'hi' %} नगालैंड {% else %}Nagaland{% endif %}</option>
+              <option value="Odisha">{% if lang == 'hi' %} ओडिशा {% else %}Odisha{% endif %}</option>
+              <option value="Punjab">{% if lang == 'hi' %} पंजाब {% else %}Punjab{% endif %}</option>
+              <option value="Rajasthan">{% if lang == 'hi' %} राजस्थान {% else %}Rajasthan{% endif %}</option>
+              <option value="Sikkim">{% if lang == 'hi' %} सिक्किम {% else %}Sikkim{% endif %}</option>
+              <option value="Tamil Nadu">{% if lang == 'hi' %} तमिलनाडु {% else %}Tamil Nadu{% endif %}</option>
+              <option value="Telangana">{% if lang == 'hi' %} तेलंगाना {% else %}Telangana{% endif %}</option>
+              <option value="Tripura">{% if lang == 'hi' %} त्रिपुरा {% else %}Tripura{% endif %}</option>
+              <option value="Uttar Pradesh">{% if lang == 'hi' %} उत्तर प्रदेश {% else %}Uttar Pradesh{% endif %}</option>
+              <option value="Uttarakhand">{% if lang == 'hi' %} उत्तराखंड {% else %}Uttarakhand{% endif %}</option>
+              <option value="West Bengal">{% if lang == 'hi' %} पश्चिम बंगाल {% else %}West Bengal{% endif %}</option>
+
+              <option value="Other">{% if lang == 'hi' %} अन्य {% else %}Other{% endif %}</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} जिला {% else %}District{% endif %}
+            </label>
+            <input type="text" name="district" 
+                   placeholder="{% if lang == 'hi' %} अपना जिला डालें {% else %}Enter your district{% endif %}"
+                   class="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} स्थान प्रकार {% else %}Location Type{% endif %}
+            </label>
+            <select name="location_type" class="w-full p-4 border border-gray-300 rounded-xl">
+              <option value="">{% if lang == 'hi' %} प्रकार चुनें {% else %}Select Type{% endif %}</option>
+              <option value="rural">{% if lang == 'hi' %} ग्रामीण {% else %}Rural{% endif %}</option>
+              <option value="semi-urban">{% if lang == 'hi' %} अर्ध-शहरी {% else %}Semi-Urban{% endif %}</option>
+              <option value="urban">{% if lang == 'hi' %} शहरी {% else %}Urban{% endif %}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} स्थान {% else %}Location{% endif %}
+            </label>
+            <input type="text" name="location" 
+                   placeholder="{% if lang == 'hi' %} शहर/गांव का नाम {% else %}City/Village name{% endif %}"
+                   class="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100">
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: Financial Information -->
+      <div class="border-b pb-8">
+        <h2 class="text-2xl font-bold text-[#1793b8] mb-6 flex items-center">
+          <i class="fas fa-rupee-sign mr-3 text-3xl"></i>
+          {% if lang == 'hi' %} वित्तीय जानकारी {% else %}Financial Information{% endif %}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} मासिक आय (₹) {% else %}Monthly Income (₹){% endif %} <span class="text-red-500">*</span>
+            </label>
+            <input type="number" name="monthly_income" min="0" step="100" required
+                   class="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} मासिक खर्च (₹) {% else %}Monthly Expenses (₹){% endif %} <span class="text-red-500">*</span>
+            </label>
+            <input type="number" name="monthly_expenses" min="0" step="100" required
+                   class="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} आय का मुख्य स्रोत {% else %}Primary Income Source{% endif %}
+            </label>
+            <select name="income_source_primary" class="w-full p-4 border border-gray-300 rounded-xl">
+              <option value="">{% if lang == 'hi' %} स्रोत चुनें {% else %}Select Source{% endif %}</option>
+              <option value="salary">{% if lang == 'hi' %} वेतन {% else %}Salary{% endif %}</option>
+              <option value="farming">{% if lang == 'hi' %} कृषि {% else %}Farming{% endif %}</option>
+              <option value="business">{% if lang == 'hi' %} व्यवसाय {% else %}Business{% endif %}</option>
+              <option value="pension">{% if lang == 'hi' %} पेंशन {% else %}Pension{% endif %}</option>
+              <option value="remittance">{% if lang == 'hi' %} रेमिटेंस {% else %}Remittance{% endif %}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              <input type="checkbox" name="has_irregular_income" id="irregular_income" class="mr-2">
+              {% if lang == 'hi' %} अनियमित आय है {% else %}Has Irregular Income{% endif %}
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4: Loans & Preferences -->
+      <div class="pb-8">
+        <h2 class="text-2xl font-bold text-[#1793b8] mb-6 flex items-center">
+          <i class="fas fa-credit-card mr-3 text-3xl"></i>
+          {% if lang == 'hi' %} ऋण और प्राथमिकताएं {% else %}Loans & Preferences{% endif %}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              <input type="checkbox" name="has_loans" id="has_loans" class="mr-2">
+              {% if lang == 'hi' %} कर्ज है {% else %}Has Loans{% endif %}
+            </label>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} कुल ऋण राशि (₹) {% else %}Total Loan Amount (₹){% endif %}
+            </label>
+            <input type="number" name="total_loan_amount" min="0" step="100" 
+                   class="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} मुख्य ऋण प्रकार {% else %}Primary Loan Type{% endif %}
+            </label>
+            <select name="loan_type_primary" class="w-full p-4 border border-gray-300 rounded-xl">
+              <option value="">{% if lang == 'hi' %} प्रकार चुनें {% else %}Select Type{% endif %}</option>
+              <option value="personal">{% if lang == 'hi' %} पर्सनल {% else %}Personal{% endif %}</option>
+              <option value="home">{% if lang == 'hi' %} होम लोन {% else %}Home{% endif %}</option>
+              <option value="vehicle">{% if lang == 'hi' %} वाहन {% else %}Vehicle{% endif %}</option>
+              <option value="education">{% if lang == 'hi' %} शिक्षा {% else %}Education{% endif %}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} मासिक EMI (₹) {% else %}Monthly EMI (₹){% endif %}
+            </label>
+            <input type="number" name="monthly_emi_total" min="0" step="100"
+                   class="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} पसंदीदा भुगतान विधि {% else %}Preferred Payment Mode{% endif %}
+            </label>
+            <select name="preferred_payment_mode" class="w-full p-4 border border-gray-300 rounded-xl">
+              <option value="">{% if lang == 'hi' %} विधि चुनें {% else %}Select Mode{% endif %}</option>
+              <option value="UPI">{% if lang == 'hi' %} UPI {% else %}UPI{% endif %}</option>
+              <option value="cash">{% if lang == 'hi' %} नकद {% else %}Cash{% endif %}</option>
+              <option value="card">{% if lang == 'hi' %} कार्ड {% else %}Card{% endif %}</option>
+              <option value="wallet">{% if lang == 'hi' %} वॉलेट {% else %}Wallet{% endif %}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} वित्तीय साक्षरता {% else %}Financial Literacy{% endif %}
+            </label>
+            <select name="financial_literacy_level" class="w-full p-4 border border-gray-300 rounded-xl">
+              <option value="">{% if lang == 'hi' %} स्तर चुनें {% else %}Select Level{% endif %}</option>
+              <option value="low">{% if lang == 'hi' %} कम {% else %}Low{% endif %}</option>
+              <option value="medium">{% if lang == 'hi' %} मध्यम {% else %}Medium{% endif %}</option>
+              <option value="high">{% if lang == 'hi' %} उच्च {% else %}High{% endif %}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} जोखिम सहनशीलता {% else %}Risk Tolerance{% endif %}
+            </label>
+            <select name="risk_tolerance" class="w-full p-4 border border-gray-300 rounded-xl">
+              <option value="">{% if lang == 'hi' %} स्तर चुनें {% else %}Select Level{% endif %}</option>
+              <option value="low">{% if lang == 'hi' %} कम {% else %}Low{% endif %}</option>
+              <option value="medium">{% if lang == 'hi' %} मध्यम {% else %}Medium{% endif %}</option>
+              <option value="high">{% if lang == 'hi' %} उच्च {% else %}High{% endif %}</option>
+            </select>
+          </div>
+          <div class="lg:col-span-3">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              {% if lang == 'hi' %} मौजूदा ऋण (विवरण) {% else %}Existing Loans (Details){% endif %}
+            </label>
+            <textarea name="existing_loans" rows="3" 
+                      placeholder="{% if lang == 'hi' %} जैसे - होम लोन ₹20,000/माह, क्रेडिट कार्ड ₹5,000 {% else %}e.g., Home loan ₹20,000/month, Credit card ₹5,000{% endif %}"
+                      class="w-full p-4 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100"></textarea>
+          </div>
+        </div>
+      </div>
+
+<!-- Submit Button -->
+<div class="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+<button
+  type="submit"
+  class="w-full sm:w-auto flex-1 px-8 py-4 rounded-full text-white font-semibold
+         bg-gradient-to-r from-[#09B39B] via-[#1793b8] to-[#4F9DFE]
+         shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.01] hover:from-[#147b97]"
+>
+  {% if lang == 'hi' %}
+    अगला चरण: लेनदेन जोड़ें →
+  {% else %}
+    Next Step: Add Transactions →
+  {% endif %}
+</button>
+</div>
+</form>
+</div>
+
+<style>
+.step.active { box-shadow: 0 0 0 4px rgba(23, 147, 184, 0.3); }
+.step { transition: all 0.3s ease; }
+</style>
+
+<button id="onboard1-voice-btn"
+  class="fixed bottom-28 right-6 bg-white shadow-xl rounded-full p-4 border border-gray-200 hover:bg-blue-50 z-[9999]">
+  <i class="fas fa-volume-up text-2xl text-blue-700"></i>
+</button>
+
+<style>
+#onboard1-voice-btn.speaking { background-color: #1793b8 !important; }
+#onboard1-voice-btn.speaking i { color: white !important; animation: pulse 1s infinite; }
+@keyframes pulse { 0%, 100%{opacity:1} 50%{opacity:.5} }
+</style>
+
+<script>
+const ONB_LANG = "{{ lang }}";
+let onbUtterance = null;
+
+const ONB_VOICE_TEXT = {
+  intro: {
+    en: "Please complete your personal, household, and financial profile. Fill in all required fields marked with a star.",
+    hi: "कृपया अपनी व्यक्तिगत, पारिवारिक और वित्तीय जानकारी भरें। स्टार वाले सभी अनिवार्य स्थान भरें।"
+  }
+};
+
+function speakOnboardingText(t) {
+  if (onbUtterance) {
+    window.speechSynthesis.cancel();
+    onbUtterance = null;
+  }
+
+  const text = ONB_LANG === "hi" ? t.hi : t.en;
+
+  onbUtterance = new SpeechSynthesisUtterance(text);
+  onbUtterance.lang = ONB_LANG === "hi" ? "hi-IN" : "en-US";
+  onbUtterance.rate = 0.95;
+
+  window.speechSynthesis.speak(onbUtterance);
+}
+
+const btnOB = document.getElementById("onboard1-voice-btn");
+
+btnOB.addEventListener("click", function () {
+    // If currently speaking → STOP
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        btnOB.classList.remove("speaking");
+        return;
+    }
+
+    // Otherwise speak intro message
+    speakOnboardingText(ONB_VOICE_TEXT.intro);
+
+    btnOB.classList.add("speaking");
+
+    // Remove animation when finished
+    onbUtterance.onend = () => {
+        btnOB.classList.remove("speaking");
+    };
+});
+</script>
+
+{% endblock %}

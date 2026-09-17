@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+{% block title %}AI Assistant - MoneyPath AI{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        <!-- Page Header -->
+        <div class="text-center mb-8">
+            <button onclick="history.back()" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4">
+                <i class="fas fa-arrow-left"></i>
+                <span>{% if lang == 'hi' %}वापस जाएं{% else %}Go Back{% endif %}</span>
+            </button>
+            
+            {% if not logged_in %}
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-2xl mx-auto mb-4">
+                <p class="text-yellow-800 text-sm">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    {% if lang == 'hi' %}
+                    अधिक व्यक्तिगत सलाह के लिए <a href="{{ url_for('login', lang=lang) }}" class="font-bold underline">साइन अप करें</a>
+                    {% else %}
+                    <a href="{{ url_for('login', lang=lang) }}" class="font-bold underline">Sign up</a> for personalized financial advice
+                    {% endif %}
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- Info about knowledge sources -->
+            <p class="text-xs text-gray-500">
+                {% if lang == 'hi' %}
+                यह सहायक RBI वित्तीय साक्षरता सामग्री और सरकारी योजना डेटाबेस की जानकारी का उपयोग करता है।
+                {% else %}
+                This assistant uses RBI financial literacy content and a government schemes database to answer your questions.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Main Chat Container -->
+        <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden" style="height: calc(100vh - 180px);">
+            <div class="flex flex-col h-full">
+                <!-- Chat Header -->
+                <div class="bg-gradient-to-r from-blue-500 to-cyan-600 p-6 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg">
+                            <i class="fas fa-robot text-blue-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-white text-2xl font-bold">
+                                {% if lang == 'hi' %}AI वित्तीय सहायक{% else %}AI Financial Assistant{% endif %}
+                            </h1>
+                            <p class="text-blue-100 flex items-center gap-2">
+                                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                                {% if lang == 'hi' %}ऑनलाइन • मदद के लिए तैयार{% else %}Online • Ready to help{% endif %}
+                                {% if logged_in %}
+                                <span class="ml-2 bg-blue-700 px-2 py-0.5 rounded text-xs">
+                                    {% if lang == 'hi' %}व्यक्तिगत{% else %}Personalized{% endif %}
+                                </span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <button id="voice-input-btn" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+                        <i class="fas fa-microphone"></i>
+                        <span class="hidden md:inline">{% if lang == 'hi' %}वॉइस{% else %}Voice{% endif %}</span>
+                    </button>
+                </div>
+
+                <!-- Chat Messages Area -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50">
+                    <!-- Initial Welcome Message -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white"></i>
+                        </div>
+                        <div class="bg-white rounded-2xl rounded-tl-none p-4 shadow-sm max-w-2xl">
+                            <p class="text-gray-800 mb-3">
+                                {% if lang == 'hi' %}
+                                नमस्ते! मैं आपका MoneyPath AI सहायक हूं। मैं आपकी मदद कैसे कर सकता हूं? 😊
+                                {% else %}
+                                Hello! I'm your MoneyPath AI assistant. How can I help you today? 😊
+                                {% endif %}
+                            </p>
+                            {% if not logged_in %}
+                            <p class="text-gray-600 text-sm mt-2">
+                                {% if lang == 'hi' %}
+                                💡 मैं सामान्य वित्तीय सलाह दे सकता हूं। अधिक व्यक्तिगत मार्गदर्शन के लिए साइन अप करें!
+                                {% else %}
+                                💡 I can provide general financial advice. Sign up for personalized guidance!
+                                {% endif %}
+                            </p>
+                            {% endif %}
+                            <button class="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm mt-2 speak-btn">
+                                <i class="fas fa-volume-up"></i>
+                                <span>{% if lang == 'hi' %}सुनें{% else %}Listen{% endif %}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suggested Questions -->
+                <div class="px-6 py-4 bg-white border-t border-gray-200">
+                    <p class="text-sm text-gray-600 mb-3 font-medium">{% if lang == 'hi' %}यह पूछने की कोशिश करें:{% else %}Try asking:{% endif %}</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="suggestion-btn px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full text-sm transition border border-blue-200">
+                            {% if lang == 'hi' %}मैं अधिक पैसे कैसे बचा सकता हूं?{% else %}How can I save more money?{% endif %}
+                        </button>
+                        <button class="suggestion-btn px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full text-sm transition border border-blue-200">
+                            {% if lang == 'hi' %}मैं किन सरकारी योजनाओं के लिए पात्र हूं?{% else %}What government schemes am I eligible for?{% endif %}
+                        </button>
+                        <button class="suggestion-btn px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full text-sm transition border border-blue-200">
+                            {% if lang == 'hi' %}बजट कैसे बनाएं?{% else %}How to create a budget?{% endif %}
+                        </button>
+                        <button class="suggestion-btn px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full text-sm transition border border-blue-200">
+                            {% if lang == 'hi' %}निवेश कैसे शुरू करें?{% else %}How to start investing?{% endif %}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="p-6 bg-white border-t border-gray-200">
+                    <form id="chat-form" class="flex items-end gap-3">
+                        <button type="button" id="mic-btn" class="flex-shrink-0 w-12 h-12 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition">
+                            <i class="fas fa-microphone text-gray-600"></i>
+                        </button>
+                        <div class="flex-1 relative">
+                            <textarea 
+                                id="user-input" 
+                                rows="1" 
+                                class="w-full px-5 py-3 border-2 border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500 resize-none" 
+                                placeholder="{% if lang == 'hi' %}वित्त, योजनाओं या बचत के बारे में कुछ भी पूछें...{% else %}Ask me anything about finances, schemes, or savings...{% endif %}"
+                                style="min-height: 48px; max-height: 120px;"
+                            ></textarea>
+                        </div>
+                        <button type="submit" id="send-btn" class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 rounded-full flex items-center justify-center transition shadow-lg">
+                            <i class="fas fa-paper-plane text-white"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom scrollbar */
+    #chat-messages::-webkit-scrollbar {
+        width: 8px;
+    }
+    #chat-messages::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    #chat-messages::-webkit-scrollbar-thumb {
+        background: #cbd5e0;
+        border-radius: 10px;
+    }
+    #chat-messages::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+    }
+
+    /* Auto-resize textarea */
+    #user-input {
+        overflow-y: hidden;
+    }
+
+    /* Speaking button animation */
+    .speak-btn.speaking {
+        background-color: #3b82f6 !important;
+        color: white !important;
+    }
+    .speak-btn.speaking i {
+        animation: pulse-icon 1s infinite;
+    }
+    @keyframes pulse-icon {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    /* Microphone recording state */
+    .recording {
+        background-color: #fee2e2 !important;
+    }
+
+    /* Typing indicator animation */
+    .typing-indicator {
+        display: inline-flex;
+        gap: 4px;
+    }
+    .typing-indicator span {
+        width: 8px;
+        height: 8px;
+        background-color: #94a3b8;
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+    }
+    .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    @keyframes typing {
+        0%, 60%, 100% { transform: translateY(0); }
+        30% { transform: translateY(-10px); }
+    }
+</style>
+
+<script>
+    const chatMessages = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const micBtn = document.getElementById('mic-btn');
+    const voiceInputBtn = document.getElementById('voice-input-btn');
+    const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+    const lang = "{{ lang }}";
+    const loggedIn = {{ 'true' if logged_in else 'false' }};
+
+    let currentSpeechBtn = null;
+
+    // Auto-resize textarea
+    userInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+
+    // Handle suggestion button clicks
+    suggestionBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const question = this.textContent.trim();
+            userInput.value = question;
+            chatForm.dispatchEvent(new Event('submit'));
+        });
+    });
+
+    // Handle form submission
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        // Add user message
+        addUserMessage(message);
+        userInput.value = '';
+        userInput.style.height = 'auto';
+
+        // Show typing indicator
+        const typingId = showTypingIndicator();
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: message,
+                    lang: lang
+                })
+            });
+
+            const data = await response.json();
+
+            removeTypingIndicator(typingId);
+            addBotMessage(data.response);
+        } catch (error) {
+            removeTypingIndicator(typingId);
+            addBotMessage(lang === 'hi' ? 
+                'क्षमा करें, कुछ गलत हो गया। कृपया पुनः प्रयास करें।' : 
+                'Sorry, something went wrong. Please try again.'
+            );
+        }
+    });
+
+    // Voice input functionality
+    let recognition = null;
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = lang === 'hi' ? 'hi-IN' : 'en-US';
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
+            micBtn.innerHTML = '<i class="fas fa-microphone text-gray-600"></i>';
+            micBtn.classList.remove('recording');
+        };
+
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error:', event.error);
+            micBtn.innerHTML = '<i class="fas fa-microphone text-gray-600"></i>';
+            micBtn.classList.remove('recording');
+            if (event.error === 'not-allowed') {
+                alert(lang === 'hi' 
+                    ? 'माइक्रोफोन की अनुमति दें' 
+                    : 'Please allow microphone access');
+            }
+        };
+
+        recognition.onend = function() {
+            micBtn.innerHTML = '<i class="fas fa-microphone text-gray-600"></i>';
+            micBtn.classList.remove('recording');
+        };
+
+        micBtn.addEventListener('click', function() {
+            if (recognition.isRecording) {
+                recognition.stop();
+                recognition.isRecording = false;
+            } else {
+                try {
+                    recognition.start();
+                    recognition.isRecording = true;
+                    micBtn.classList.add('recording');
+                    micBtn.innerHTML = '<i class="fas fa-microphone text-red-500 animate-pulse"></i>';
+                } catch (error) {
+                    console.error('Recognition start error:', error);
+                }
+            }
+        });
+
+        voiceInputBtn.addEventListener('click', function() {
+            micBtn.click();
+        });
+    } else {
+        micBtn.style.display = 'none';
+        voiceInputBtn.style.display = 'none';
+    }
+
+    // Helper functions
+    function addUserMessage(message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex items-start gap-3 justify-end';
+        messageDiv.innerHTML = `
+            <div class="bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl rounded-tr-none p-4 shadow-sm max-w-2xl">
+                <p class="text-white">${escapeHtml(message)}</p>
+            </div>
+            <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-user text-gray-600"></i>
+            </div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addBotMessage(message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex items-start gap-3';
+        
+        const formattedMessage = message.replace(/\n/g, '<br>');
+        
+        messageDiv.innerHTML = `
+            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-robot text-white"></i>
+            </div>
+            <div class="bg-white rounded-2xl rounded-tl-none p-4 shadow-sm max-w-2xl">
+                <p class="text-gray-800 mb-3">${formattedMessage}</p>
+                <button class="speak-btn flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-3 py-1 rounded-lg text-sm transition">
+                    <i class="fas fa-volume-up"></i>
+                    <span>${lang === 'hi' ? 'सुनें' : 'Listen'}</span>
+                </button>
+            </div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        const speakBtn = messageDiv.querySelector('.speak-btn');
+        const originalMessage = message;
+        speakBtn.addEventListener('click', function() {
+            speakText(originalMessage, speakBtn);
+        });
+    }
+
+    function showTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        const id = 'typing-' + Date.now();
+        typingDiv.id = id;
+        typingDiv.className = 'flex items-start gap-3';
+        typingDiv.innerHTML = `
+            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-robot text-white"></i>
+            </div>
+            <div class="bg-white rounded-2xl rounded-tl-none p-4 shadow-sm">
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        return id;
+    }
+
+    function removeTypingIndicator(id) {
+        const typingDiv = document.getElementById(id);
+        if (typingDiv) typingDiv.remove();
+    }
+
+    function speakText(text, button) {
+        if ('speechSynthesis' in window) {
+            if (currentSpeechBtn === button && window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                button.innerHTML = `<i class="fas fa-volume-up"></i><span>${lang === 'hi' ? 'सुनें' : 'Listen'}</span>`;
+                button.classList.remove('speaking');
+                currentSpeechBtn = null;
+                return;
+            }
+
+            window.speechSynthesis.cancel();
+
+            document.querySelectorAll('.speak-btn').forEach(btn => {
+                btn.innerHTML = `<i class="fas fa-volume-up"></i><span>${lang === 'hi' ? 'सुनें' : 'Listen'}</span>`;
+                btn.classList.remove('speaking');
+            });
+
+            const cleanText = text.replace(/<[^>]*>/g, '').replace(/\n/g, '. ');
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = lang === 'hi' ? 'hi-IN' : 'en-US';
+            utterance.rate = 0.85;
+            utterance.pitch = 1;
+
+            button.innerHTML = `<i class="fas fa-stop"></i><span>${lang === 'hi' ? 'रोकें' : 'Stop'}</span>`;
+            button.classList.add('speaking');
+            currentSpeechBtn = button;
+
+            utterance.onend = function() {
+                button.innerHTML = `<i class="fas fa-volume-up"></i><span>${lang === 'hi' ? 'सुनें' : 'Listen'}</span>`;
+                button.classList.remove('speaking');
+                currentSpeechBtn = null;
+            };
+
+            utterance.onerror = function(event) {
+                console.error('Speech synthesis error:', event.error);
+                button.innerHTML = `<i class="fas fa-volume-up"></i><span>${lang === 'hi' ? 'सुनें' : 'Listen'}</span>`;
+                button.classList.remove('speaking');
+                currentSpeechBtn = null;
+            };
+
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert(lang === 'hi' 
+                ? 'आपका ब्राउज़र ऑडियो का समर्थन नहीं करता' 
+                : 'Your browser does not support audio');
+        }
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Add speak functionality to initial welcome message
+    document.querySelectorAll('.speak-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const messageText = this.closest('.bg-white').querySelector('p').textContent;
+            speakText(messageText, this);
+        });
+    });
+
+    // Pre-filled question from URL (?q=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const prefilledQuestion = urlParams.get('q');
+    if (prefilledQuestion) {
+        userInput.value = prefilledQuestion;
+        setTimeout(() => {
+            chatForm.dispatchEvent(new Event('submit'));
+        }, 500);
+    }
+
+    // Stop speech on unload
+    window.addEventListener('beforeunload', function() {
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
+    });
+
+    // ESC key stops speech
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+            document.querySelectorAll('.speak-btn').forEach(btn => {
+                btn.innerHTML = `<i class="fas fa-volume-up"></i><span>${lang === 'hi' ? 'सुनें' : 'Listen'}</span>`;
+                btn.classList.remove('speaking');
+            });
+            currentSpeechBtn = null;
+        }
+    });
+</script>
+{% endblock %}

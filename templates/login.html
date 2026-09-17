@@ -1,0 +1,388 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex-1 flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
+  <!-- Centered Login Card -->
+  <div class="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">
+      {% if lang == "hi" %}लॉगिन / साइन अप{% else %}Login / Sign Up{% endif %}
+    </h2>
+    
+    <!-- Phone Number Input -->
+    <div id="phone-section">
+      <label class="block mb-2 font-semibold text-gray-700">
+        {% if lang == "hi" %}मोबाइल नंबर{% else %}Phone Number{% endif %}
+      </label>
+      <div class="relative mb-4">
+        <span class="absolute left-4 top-3 text-gray-600 font-semibold">+91</span>
+        <input type="tel" id="phone-number" pattern="[0-9]{10}" maxlength="10" 
+               placeholder="9876543210" 
+               class="w-full border-2 border-gray-300 pl-14 pr-4 py-3 text-lg rounded-lg focus:outline-none focus:border-blue-500" />
+      </div>
+      
+      <!-- reCAPTCHA container -->
+      <div id="recaptcha-container" class="mb-4"></div>
+      
+      <button id="send-otp-btn"
+        class="w-full bg-[#1793b8] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#147b97] transition shadow-md">
+        {% if lang == "hi" %}ओटीपी भेजें{% else %}Send OTP{% endif %}
+      </button>
+    </div>
+    
+    <!-- OTP Input -->
+    <div id="otp-section" style="display:none;">
+      <button onclick="showPhoneSection()" class="mb-4 text-blue-600 hover:text-blue-700 text-sm flex items-center gap-2">
+        <i class="fas fa-arrow-left"></i>
+        {% if lang == "hi" %}नंबर बदलें{% else %}Change Number{% endif %}
+      </button>
+      
+      <label class="block mb-2 font-semibold text-gray-700">
+        {% if lang == "hi" %}ओटीपी दर्ज करें{% else %}Enter OTP{% endif %}
+      </label>
+      <input type="text" id="otp-input" maxlength="6" placeholder="123456" 
+             class="w-full mb-4 border-2 border-gray-300 px-4 py-3 text-lg rounded-lg text-center tracking-widest focus:outline-none focus:border-blue-500" />
+      
+      <button id="verify-otp-btn"
+        class="w-full bg-[#1793b8] text-white py-3 rounded-lg font-bold text-lg hover:bg-[#147b97] transition shadow-md">
+        {% if lang == "hi" %}लॉगिन{% else %}Login{% endif %}
+      </button>
+      
+      <button id="resend-otp-btn" class="w-full mt-3 text-blue-600 hover:text-blue-700 text-sm font-semibold">
+        {% if lang == "hi" %}ओटीपी पुनः भेजें{% else %}Resend OTP{% endif %}
+      </button>
+    </div>
+    
+    <!-- Loading indicator -->
+    <div id="loading" style="display:none;" class="text-center mt-4">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <p class="text-sm text-gray-600 mt-2">
+        {% if lang == "hi" %}कृपया प्रतीक्षा करें...{% else %}Please wait...{% endif %}
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="notification-toast" style="display:none; opacity:0; transition: opacity 0.3s;"></div>
+
+<!-- Floating Voice Button -->
+<button id="login-voice-btn"
+        class="fixed bottom-28 right-6 bg-white shadow-xl rounded-full p-4 border border-gray-200 hover:bg-blue-50 transition z-[9999]">
+    <i class="fas fa-volume-up text-2xl text-blue-700"></i>
+</button>
+
+<style>
+    #login-voice-btn.speaking {
+        background-color: #1793b8 !important;
+    }
+    #login-voice-btn.speaking i {
+        color: white !important;
+        animation: pulse-icon 1s infinite;
+    }
+    @keyframes pulse-icon {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+</style>
+
+<script>
+const loginLang = "{{ lang }}";  // 'hi' or 'en'
+let loginUtterance = null;
+
+// Voice messages
+const VOICE_MESSAGES = {
+    phone: {
+        en: `
+            Please enter your ten-digit mobile number.
+            After you click Send OTP, a one-time password will be sent to your phone.
+            Enter that OTP on the next screen to log in.
+        `,
+        hi: `
+            कृपया अपना दस अंकों का मोबाइल नंबर दर्ज करें।
+            ओटीपी भेजें पर क्लिक करने के बाद, आपके फ़ोन पर एक ओटीपी भेजा जाएगा।
+            लॉगिन करने के लिए अगले चरण में आपको वह ओटीपी दर्ज करना होगा।
+        `
+    },
+    otp: {
+        en: `
+            Please enter the six-digit OTP you received on your phone
+            to complete your login.
+        `,
+        hi: `
+            कृपया लॉगिन पूरा करने के लिए आपको प्राप्त छह अंकों का ओटीपी दर्ज करें।
+        `
+    }
+};
+
+// Detect whether user is on phone section or OTP section
+function getCurrentStage() {
+    const phoneVisible = document.getElementById("phone-section").style.display !== "none";
+    return phoneVisible ? "phone" : "otp";
+}
+
+// Voice button logic
+document.getElementById("login-voice-btn").addEventListener("click", function () {
+    
+    // Stop if already speaking
+    if (loginUtterance) {
+        window.speechSynthesis.cancel();
+        loginUtterance = null;
+        this.classList.remove("speaking");
+        return;
+    }
+
+    const stage = getCurrentStage();
+    const text = VOICE_MESSAGES[stage][loginLang === "hi" ? "hi" : "en"];
+
+    loginUtterance = new SpeechSynthesisUtterance(text);
+    loginUtterance.lang = loginLang === "hi" ? "hi-IN" : "en-US";
+    loginUtterance.rate = 0.95;
+    loginUtterance.pitch = 1;
+
+    this.classList.add("speaking");
+
+    loginUtterance.onend = () => {
+        this.classList.remove("speaking");
+        loginUtterance = null;
+    };
+
+    window.speechSynthesis.speak(loginUtterance);
+});
+
+window.addEventListener("beforeunload", () => {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+});
+</script>
+
+<!-- Firebase and custom scripts -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script>
+// Initialize Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBzK6Gh3KQDGThfTsBVmSYRweSpOiz3BJM",
+  authDomain: "moneypathai.firebaseapp.com",
+  projectId: "moneypathai",
+  storageBucket: "moneypathai.firebasestorage.app",
+  messagingSenderId: "297607633480",
+  appId: "1:297607633480:web:7b70174ce6119fe4af167d",
+  measurementId: "G-YRGH2W9JY9"
+};
+
+firebase.initializeApp(firebaseConfig);
+console.log('Firebase initialized successfully');
+
+// Get language
+const urlParams = new URLSearchParams(window.location.search);
+const lang = urlParams.get('lang') === 'hi' ? 'hi' : 'en';
+
+// Messages
+const MESSAGES = {
+  invalidPhone: {
+    en: "Please enter a valid 10-digit phone number",
+    hi: "कृपया वैध 10-अंकीय फ़ोन नंबर दर्ज करें"
+  },
+  otpSent: {
+    en: "OTP sent successfully! Check your phone.",
+    hi: "OTP सफलतापूर्वक भेजा गया! अपना फ़ोन चेक करें।"
+  },
+  otpError: {
+    en: "Error sending OTP. Please try again.",
+    hi: "OTP भेजने में त्रुटि। कृपया पुनः प्रयास करें।"
+  },
+  enterOtp: {
+    en: "Please enter the 6-digit OTP",
+    hi: "कृपया 6-अंकीय OTP दर्ज करें"
+  },
+  loginSuccess: {
+    en: "Login successful! Redirecting...",
+    hi: "लॉगिन सफल! पुनर्निर्देशित किया जा रहा है..."
+  },
+  otpInvalid: {
+    en: "Invalid OTP. Please try again.",
+    hi: "OTP अमान्य है। कृपया पुनः प्रयास करें।"
+  },
+  tooManyRequests: {
+    en: "Too many attempts. Please try again later.",
+    hi: "बहुत सारे प्रयास। कुछ समय बाद पुनः प्रयास करें।"
+  }
+};
+
+// Toast function
+function showToast(message, type = "info") {
+  const toast = document.getElementById("notification-toast");
+  toast.textContent = message;
+  
+  if (type === "success") {
+    toast.className = "fixed top-8 right-8 z-50 px-6 py-4 rounded-lg bg-green-600 text-white text-lg shadow-lg";
+  } else if (type === "error") {
+    toast.className = "fixed top-8 right-8 z-50 px-6 py-4 rounded-lg bg-red-600 text-white text-lg shadow-lg";
+  } else {
+    toast.className = "fixed top-8 right-8 z-50 px-6 py-4 rounded-lg bg-blue-600 text-white text-lg shadow-lg";
+  }
+  
+  toast.style.display = "block";
+  toast.style.opacity = 1;
+  
+  setTimeout(() => {
+    toast.style.opacity = 0;
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 300);
+  }, 3000);
+}
+
+// Elements
+const phoneInput = document.getElementById("phone-number");
+const sendOtpBtn = document.getElementById("send-otp-btn");
+const otpInput = document.getElementById("otp-input");
+const verifyOtpBtn = document.getElementById("verify-otp-btn");
+const resendOtpBtn = document.getElementById("resend-otp-btn");
+const phoneSection = document.getElementById("phone-section");
+const otpSection = document.getElementById("otp-section");
+const loading = document.getElementById("loading");
+
+let confirmationResult = null;
+let currentPhone = null;
+
+// Initialize reCAPTCHA - NORMAL MODE (not invisible)
+// Initialize reCAPTCHA - INVISIBLE MODE
+window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+  'size': 'invisible',  // ← CHANGED: Now invisible
+  'callback': (response) => {
+    console.log('reCAPTCHA verified');
+  },
+  'expired-callback': () => {
+    console.log('reCAPTCHA expired');
+  }
+});
+
+// Render reCAPTCHA
+window.recaptchaVerifier.render().then((widgetId) => {
+  window.recaptchaWidgetId = widgetId;
+  console.log('reCAPTCHA rendered with ID:', widgetId);
+});
+
+// Send OTP
+sendOtpBtn.addEventListener("click", async () => {
+  const phone = phoneInput.value.trim();
+  
+  // Validate
+  if (!phone.match(/^\d{10}$/)) {
+    showToast(MESSAGES.invalidPhone[lang], "error");
+    return;
+  }
+  
+  currentPhone = "+91" + phone;
+  console.log('Attempting to send OTP to:', currentPhone);
+  
+  // Disable button and show loading
+  sendOtpBtn.disabled = true;
+  sendOtpBtn.textContent = lang === 'hi' ? 'भेजा जा रहा है...' : 'Sending...';
+  loading.style.display = 'block';
+  
+  try {
+    const appVerifier = window.recaptchaVerifier;
+    confirmationResult = await firebase.auth().signInWithPhoneNumber(currentPhone, appVerifier);
+    
+    console.log('OTP sent successfully');
+    showToast(MESSAGES.otpSent[lang], "success");
+    
+    // Switch to OTP section
+    phoneSection.style.display = "none";
+    otpSection.style.display = "block";
+    loading.style.display = 'none';
+    
+  } catch (error) {
+    console.error('OTP Error:', error);
+    console.error('Error code:', error.code);
+    
+    let errorMsg = MESSAGES.otpError[lang];
+    if (error.code === 'auth/too-many-requests') {
+      errorMsg = MESSAGES.tooManyRequests[lang];
+    } else if (error.code === 'auth/invalid-phone-number') {
+      errorMsg = MESSAGES.invalidPhone[lang];
+    }
+    
+    showToast(errorMsg, "error");
+    sendOtpBtn.disabled = false;
+    sendOtpBtn.textContent = lang === 'hi' ? 'ओटीपी भेजें' : 'Send OTP';
+    loading.style.display = 'none';
+    
+    // Reset reCAPTCHA
+    try {
+      grecaptcha.reset(window.recaptchaWidgetId);
+    } catch (e) {
+      console.error('reCAPTCHA reset error:', e);
+    }
+  }
+});
+
+// Verify OTP
+verifyOtpBtn.addEventListener("click", async () => {
+  const code = otpInput.value.trim();
+  
+  if (code.length !== 6) {
+    showToast(MESSAGES.enterOtp[lang], "error");
+    return;
+  }
+  
+  verifyOtpBtn.disabled = true;
+  verifyOtpBtn.textContent = lang === 'hi' ? 'सत्यापित किया जा रहा है...' : 'Verifying...';
+  loading.style.display = 'block';
+  
+  try {
+    const result = await confirmationResult.confirm(code);
+    const user = result.user;
+    const idToken = await user.getIdToken();
+    
+    console.log('OTP verified, sending token to backend');
+    
+    // Send token to backend
+    const response = await fetch('/verify-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken })
+    });
+    
+    const data = await response.json();
+    
+    if (data.redirect) {
+      showToast(MESSAGES.loginSuccess[lang], 'success');
+      setTimeout(() => {
+        window.location.href = data.redirect;
+      }, 1500);
+    } else {
+      showToast(data.error || MESSAGES.otpInvalid[lang], 'error');
+      verifyOtpBtn.disabled = false;
+      verifyOtpBtn.textContent = lang === 'hi' ? 'लॉगिन' : 'Login';
+      loading.style.display = 'none';
+    }
+    
+  } catch (error) {
+    console.error('Verification error:', error);
+    showToast(MESSAGES.otpInvalid[lang], "error");
+    verifyOtpBtn.disabled = false;
+    verifyOtpBtn.textContent = lang === 'hi' ? 'लॉगिन' : 'Login';
+    loading.style.display = 'none';
+  }
+});
+
+// Resend OTP
+resendOtpBtn.addEventListener("click", () => {
+  phoneSection.style.display = "block";
+  otpSection.style.display = "none";
+  otpInput.value = '';
+  sendOtpBtn.disabled = false;
+  sendOtpBtn.textContent = lang === 'hi' ? 'ओटीपी भेजें' : 'Send OTP';
+});
+
+// Show phone section
+function showPhoneSection() {
+  phoneSection.style.display = "block";
+  otpSection.style.display = "none";
+  otpInput.value = '';
+  sendOtpBtn.disabled = false;
+  sendOtpBtn.textContent = lang === 'hi' ? 'ओटीपी भेजें' : 'Send OTP';
+}
+</script>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10 bg-white rounded-2xl shadow p-6 space-y-4">
+  <h1 class="text-2xl font-bold text-gray-900">
+    {{ scheme.schemeName }}
+  </h1>
+  <p class="text-sm text-gray-600">
+    {{ scheme.briefDescription }}
+  </p>
+
+  {% if scheme.schemeCategory %}
+    <p class="text-sm"><strong>Category:</strong> {{ scheme.schemeCategory[0] }}</p>
+  {% endif %}
+
+  {% if scheme.beneficiaryState %}
+    <p class="text-sm"><strong>Eligible States:</strong> {{ scheme.beneficiaryState | join(', ') }}</p>
+  {% endif %}
+
+  {% if scheme.tags %}
+    <p class="text-sm"><strong>Tags:</strong> {{ scheme.tags | join(', ') }}</p>
+  {% endif %}
+
+  {% if scheme.website %}
+    <p class="text-sm">
+      <strong>Official Website:</strong>
+      <a href="{{ scheme.website }}" target="_blank" class="text-blue-600 hover:underline">
+        {{ scheme.website }}
+      </a>
+    </p>
+  {% endif %}
+
+  <a href="{{ url_for('dashboard') }}" class="inline-block mt-4 text-blue-600 hover:underline">
+    ← Back to Dashboard
+  </a>
+</div>
+{% endblock %}
